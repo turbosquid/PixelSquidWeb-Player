@@ -1,0 +1,14 @@
+node_modules
+.tmp
+.sass-cache
+app/bower_components
+.DS_Store
+docs/*
+puppet/modules/*
+.config
+dist
+s3.json
+/test/lib/atlas
+/test/lib/require.js
+/test/lib/underscore.js
+

@@ -1,0 +1,19 @@
+{
+  "name": "atlas2",
+  "version": "2.0.0",
+  "main": "atlas_sprite_sheet_player",
+  "browserify": {
+    "transform": "deamdify"
+  },
+  "scripts": {
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "browserify": "^12.0.1",
+    "browserify-incremental": "^3.0.1",
+    "amdify": "*",
+    "lodash": "^4.8.2"
+  }
+}
