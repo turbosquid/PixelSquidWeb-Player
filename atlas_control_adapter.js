@@ -6,32 +6,39 @@ exports.AtlasControlAdapter = function (context) {
   this._domElement = null;
   this._cellWidthInPixels = 10;
   this._cellHeightInPixels = 10;
+
   if (AtlasClientCapabilities.getCapabilities().isRetinaCapable) {
     this._cellWidthInPixels /= 2;
     this._cellHeightInPixels /= 2;
   }
+
   this._changeEvent = { type: 'change' };
   this._mouseDown = {
     x: -1,
     y: -1
   };
+
   this._positionInCell = {
     x: this._cellWidthInPixels / 2,
     y: this._cellHeightInPixels / 2
   };
+
   this._nextPositionInCell = {
     x: 0,
     y: 0
   };
+
   this.reset = function () {
     this._positionInCell.x = this._cellWidthInPixels / 2;
     this._positionInCell.y = this._cellHeightInPixels / 2;
   };
+
   this.begin = function (x, y) {
     this._dragging = true;
     this._mouseDown.x = x;
     this._mouseDown.y = y;
   };
+
   this.end = function (x, y) {
     if (!this._dragging) {
       return;
