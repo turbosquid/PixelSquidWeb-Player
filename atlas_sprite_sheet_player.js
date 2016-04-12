@@ -40,16 +40,23 @@ function AtlasSpriteSheetPlayer(configuration) {
     '15',
     '16'
   ];
-  this._elemControlArea = configuration.controlArea || '.atlas-control-area';
-  this._elemViewer = configuration.viewer || '.atlas-viewer';
-  this._elemEvents = configuration.events || '.atlas-events';
-  this._windowSize = configuration.windowSize || 600;
-  this._forceBackground = configuration.forceBackground || false;
-  this._preferredImageSize = configuration.preferredImageSize || 600;
-  this._elemParent = configuration.parent || '.atlas-events';
+
+  function configFetch(name, defaultValue) {
+    return (name in configuration) ? configuration[name] : defaultValue;
+  }
+
+  this._elemControlArea      = configFetch('controlArea', '.atlas-control-area');
+  this._elemViewer           = configFetch('viewer', '.atlas-viewer');
+  this._elemEvents           = configFetch('events', '.atlas-events');
+  this._windowSize           = configFetch('windowSize', 600);
+  this._forceBackground      = configFetch('forceBackground', false);
+  this._preferredImageSize   = configFetch('preferredImageSize', 600);
+  this._elemParent           = configFetch('parent', '.atlas-events');
+  this._useCanvas            = configFetch('useCanvas', true);
+  this._useCanvasTranslation = configFetch('useCanvasTranslation', true);
+
   this._atlasControlAdapter = new AtlasControlAdapter();
   this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter);
-  this._useCanvas = configuration.useCanvas === undefined ? true : configuration.useCanvas;
   this._canvas = null;
   this._context = null;
   this._div = null;
@@ -228,12 +235,7 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
     }
     if (image && progress >= 100) {
       that.renderImage();
-      var update = setInterval(function () {
-        that.renderImage();
-      }, 100);
-      setTimeout(function () {
-        clearInterval(update);
-      }, 1000);
+
       if (that._canvas && that._context) {
         $(that._canvas).show();
       } else {
@@ -254,7 +256,19 @@ AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground)
   if (this._canvas && this._context && !forceBackground && !this._forceBackground) {
     this._context.imageSmoothingEnabled = true;
     this._context.mozImageSmoothingEnabled = true;
-    this._context.drawImage(this._atlasImage.image, cell.left, cell.top, this._imageResolution, this._imageResolution, 0, 0, this._canvasResolution, this._canvasResolution);
+
+    if (this._useCanvasTranslation) {
+      // This fixes an issue with Android downsampling images > 4096x4096
+      // causing various problems with drawImage and background-position
+      this._context.save();
+      var drawScale = this._canvasResolution / this._imageResolution;
+      this._context.scale(drawScale, drawScale);
+      this._context.translate(-cell.left, -cell.top);
+      this._context.drawImage(this._atlasImage.image, 0, 0);
+      this._context.restore();
+    } else {
+      this._context.drawImage(this._atlasImage.image, cell.left, cell.top, this._imageResolution, this._imageResolution, 0, 0, this._canvasResolution, this._canvasResolution);
+    }
   } else {
     var css = {
       'width': this._windowSize,

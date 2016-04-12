@@ -22,8 +22,11 @@ AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowse
 
       var blob = new Blob([this.response], { type: mimeType });
       that.image.src = window.URL.createObjectURL(blob);
-      if (callback) {
-        callback(null, 100.0, that.image);
+      that.image.onload = function() {
+        window.URL.revokeObjectURL(that.image.src)
+        if (callback) {
+          callback(null, 100.0, that.image);
+        }
       }
     };
 
