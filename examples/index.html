@@ -1,0 +1,19 @@
+<!doctype HTML>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>PixelSquid Atlas - Basic Loading</title>
+  <script src='lib/jquery-1.12.3.min.js'></script>
+  <script src='lib/lodash-4.9.0.min.js'></script>
+</head>
+<body>
+  <div id='test'>TEST</div>
+  <div class='atlas-control-area atlas-events atlas-viewer'>
+  </div>
+  <script src='../../pixelsquid-atlas.js'></script>
+  <script>
+  var player = new PixelSquidAtlas.AtlasSpriteSheetPlayer({});
+  console.log(player.VERSION);
+  </script>
+</body>
+</html>

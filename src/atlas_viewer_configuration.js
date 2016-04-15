@@ -1,5 +1,5 @@
 'use strict';
-var Constants = require('./atlas_viewer_constants').AtlasViewerConstants;
+var Constants = require('./atlas_constants').AtlasViewerConstants;
 
 var AtlasViewerConfiguration = function (viewerId, controlId, dragId, hideCursor) {
   this._viewerId = viewerId;
