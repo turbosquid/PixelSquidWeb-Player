@@ -54,10 +54,11 @@ if (TARGET === 'start' || !TARGET) {
   };
   app.use(crossDomain);
 
-  app.get('/api/products/:productId/spinners/:productId', function(req, res) {
+  app.get('/api/products/:productId', function(req, res) {
+    var query = url.parse(req.url, true);
     request({
       headers: { accept: req.headers.accept, authorization: req.headers.authorization },
-      uri: `http://api.pixelsquid.com/api/products/${req.params.productId}/spinners/${req.params.productId}`
+      uri: `http://api.pixelsquid.com/api/products/${req.params.productId}${query.search}`
     }, function(apiErr, apiRes, apiBody) {
       res.headers = { 'Content-Type': 'application/json' };
       res.send(apiBody);

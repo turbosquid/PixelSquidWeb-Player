@@ -29,9 +29,11 @@
       doSearch('');
     });
 
-    $('#search-terms').keyup(function() {
-      var value = $('#search-terms').val().trim();
-      doSearch(value);
+    $('#search-terms').keydown(function(evt) {
+      if (evt.which == 13) {
+        var value = $('#search-terms').val().trim();
+        doSearch(value);
+      }
     });
 
     function doSearch(terms) {
