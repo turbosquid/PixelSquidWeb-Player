@@ -5,15 +5,104 @@
   <title>PixelSquid Atlas - Basic Loading</title>
   <script src='lib/jquery-1.12.3.min.js'></script>
   <script src='lib/lodash-4.9.0.min.js'></script>
+  <style>
+    .atlas-container {
+      position: relative;
+    }
+
+    .download {
+      font-size: 16px;
+      background-color: #da4b3a;
+      color: white;
+      display: none;
+      margin-bottom: 5px;
+    }
+
+    #download_iframe {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <div id='test'>TEST</div>
-  <div class='atlas-control-area atlas-events atlas-viewer'>
+
+  <div class='progress'>Loading Progress: 0%</div>
+  <button type='button' class='download'>Download</button>
+
+  <div class='atlas-container'>
+    <div class='atlas-events'>
+      <div class='atlas-control-area atlas-viewer'>
+      </div>
+    </div>
   </div>
-  <script src='../../pixelsquid-atlas.js'></script>
+
+  <iframe id='download_iframe'></iframe>
+
   <script>
-  var player = new PixelSquidAtlas.AtlasSpriteSheetPlayer({});
-  console.log(player.VERSION);
+    window.player = null;
+
+    ///***
+    ///Loading Progress
+    ///***
+    $(document).on('atlas-load-start', '.atlas-events', function() {
+      $('.progress').show();
+      $('.download').hide();
+      $('.progress').html('Loading Progress: 0%');
+    });
+
+    $(document).on('atlas-load-progress', '.atlas-events', function(element, data) {
+      $('.progress').html('Loading Progress: ' + (data.progress * 100.0) + '%');
+    });
+
+    $(document).on('atlas-load-complete', '.atlas-events', function(element, data) {
+      $('.progress').hide();
+      $('.download').show();
+    });
+
+    ///***
+    ///Download Hi-Res Image
+    ///***
+    $(document).on('click', '.download', function() {
+      var params = [
+        'data[type]=download_link',
+        'data[attributes][angle]=' + window.player.getCurrentImageIndex(),
+        'data[attributes][resolution]=2k',
+        'data[attributes][image_format]=png',
+        'data[attributes][client_ip]=127.0.0.1',
+        'data[attributes][session_id]=SESSION',
+        'data[attributes][attachment]=true'
+      ];
+      var url = 'http://localhost:8081/api/products/924832797581907663/download_links?' + params.join('&');
+
+      $.ajax({
+        url: url,
+        headers: {
+          'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
+          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
+        }
+      }).done(function(data) {
+        var response = JSON.parse(data);
+        $('#download_iframe').src = response.data.attributes.url;
+      });
+    });
+
+    ///***
+    ///Initialize the player and begin loading
+    ///***
+    $(function() {
+      $.ajax({
+        url: 'http://localhost:8081/api/products/924832797581907663/spinners/924832797581907663',
+        headers: {
+          'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
+          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
+        }
+      }).done(function(data) {
+        var adapter = new PixelSquid.AtlasAPIAdapter();
+        adapter.parseResponse(JSON.parse(data));
+        window.player = new PixelSquid.AtlasSpriteSheetPlayer({});
+        window.player.load({ asset: adapter.getAsset() });
+      });
+    });
   </script>
+  <script src='../../pixelsquid-atlas.js'></script>
 </body>
 </html>

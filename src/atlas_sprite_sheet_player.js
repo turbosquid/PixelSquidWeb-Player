@@ -54,6 +54,7 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._elemParent           = configFetch('parent', '.atlas-events');
   this._useCanvas            = configFetch('useCanvas', true);
   this._useCanvasTranslation = configFetch('useCanvasTranslation', true);
+  this._useImageSmoothing    = configFetch('useImageSmoothing', false);
 
   this._atlasControlAdapter = new AtlasControlAdapter();
   this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter);
@@ -254,8 +255,14 @@ AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground)
   this._currentImage = image || this._currentImage;
   var cell = this._atlasSphere.getSphereCellForIndex(this._currentImage);
   if (this._canvas && this._context && !forceBackground && !this._forceBackground) {
-    this._context.imageSmoothingEnabled = true;
-    this._context.mozImageSmoothingEnabled = true;
+    if (this._useImageSmoothing) {
+      this._context.imageSmoothingEnabled = true;
+      this._context.mozImageSmoothingEnabled = true;
+    }
+    else {
+      this._context.imageSmoothingEnabled = false;
+      this._context.mozImageSmoothingEnabled = false;
+    }
 
     if (this._useCanvasTranslation) {
       // This fixes an issue with Android downsampling images > 4096x4096
