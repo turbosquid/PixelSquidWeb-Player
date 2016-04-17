@@ -7,6 +7,12 @@ AtlasAPIAdapter.prototype.parseResponse = function(response) {
   this._asset.name = response.data.attributes.name;
   //possibly null if not only spinner data is returned
   this._asset.signature_image = response.data.attributes.search_preview_url;
+  if (this._asset.signature_image) {
+    var found = this._asset.signature_image.match(/600\/(.*)\.jpg/)
+    if (found) {
+      this._asset.initial_image = found[1];
+    }
+  }
 
   //if there is included data, then it will pull spinner from there
   var attributes = response.data.attributes;

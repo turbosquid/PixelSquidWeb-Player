@@ -20,6 +20,15 @@
     #download_iframe {
       display: none;
     }
+
+    .atlas-viewer {
+      display: none;
+    }
+
+    .atlas-signature-image {
+      width: 600px;
+      height: 600px;
+    }
   </style>
 </head>
 <body>
@@ -30,6 +39,8 @@
   <div class='atlas-container'>
     <div class='atlas-events'>
       <div class='atlas-control-area atlas-viewer'>
+      </div>
+      <div class='atlas-signature-image'>
       </div>
     </div>
   </div>
@@ -55,6 +66,8 @@
     $(document).on('atlas-load-complete', '.atlas-events', function(element, data) {
       $('.progress').hide();
       $('.download').show();
+      $('.atlas-signature-image').hide();
+      $('.atlas-viewer').show();
     });
 
     ///***
@@ -98,8 +111,13 @@
       }).done(function(data) {
         var adapter = new PixelSquid.AtlasAPIAdapter();
         adapter.parseResponse(JSON.parse(data));
+
+        //show a static image while loading
+        var asset = adapter.getAsset();
+        $('.atlas-signature-image').html('<img src="' + asset.signature_image + '"/>');
+
         window.player = new PixelSquid.AtlasSpriteSheetPlayer({});
-        window.player.load({ asset: adapter.getAsset() });
+        window.player.load({ asset: asset });
       });
     });
   </script>

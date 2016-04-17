@@ -196,7 +196,7 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   }
   this._assetId = params.assetId;
   this._asset = params.asset;
-  this._initialImage = params.initialImage || 'H01';
+  this._initialImage = params.initialImage || params.asset.initial_image || 'H01';
   this._currentImage = this._initialImage;
   this._validLatitudes = this._asset.validLatitudes || this.VALID_LATITUDES;
   this._validLongitudes = this._asset.validLongitudes || this.VALID_LONGITUDES;
