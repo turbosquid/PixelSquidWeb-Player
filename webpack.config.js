@@ -27,14 +27,12 @@ const common = {
     ]
   },
   externals: {
-    'jquery': 'jQuery',
-    'lodash': '_'
+    'jquery': 'jQuery'
   },
   resolve: {
     extensions: ['', '.js'],
     alias: {
-      jquery: 'examples/lib/jquery-1.12.3.min',
-      underscore: 'examples/lib/lodash-4.9.0.min'
+      jquery: 'src/externals/jquery-1.12.3.min'
     }
   }
 };

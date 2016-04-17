@@ -3,8 +3,7 @@
 <head>
   <meta charset='utf-8'>
   <title>PixelSquid Atlas - Basic Loading</title>
-  <script src='lib/jquery-1.12.3.min.js'></script>
-  <script src='lib/lodash-4.9.0.min.js'></script>
+  <script src='../src/externals/jquery-1.12.3.min.js'></script>
   <style>
     .atlas-container {
       position: relative;
@@ -80,6 +79,7 @@
           'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
         }
       }).done(function(data) {
+        console.log(data);
         var response = JSON.parse(data);
         $('#download_iframe').src = response.data.attributes.url;
       });
