@@ -4,6 +4,7 @@ const merge = require('webpack-merge');
 const express = require('express');
 const url = require('url');
 const request = require('request');
+const bodyParser = require('body-parser');
 
 const TARGET = process.env.npm_lifecycle_event;
 
@@ -37,15 +38,17 @@ const common = {
   }
 };
 
-if (TARGET === 'build') {
+if (TARGET === 'build' || !TARGET) {
   module.exports = merge(common, {});
 }
 
-if (TARGET === 'start' || !TARGET) {
+if (TARGET === 'start') {
   //***
   //Proxy API Requests
   //***
   const app = express();
+  //app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.text({ type: '*/*' }));
 
   const crossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -76,12 +79,11 @@ if (TARGET === 'start' || !TARGET) {
     });
   });
 
-  app.get('/api/products/:productId/download_links', function(req, res) {
-    var query = url.parse(req.url, true);
+  app.post('/api/products/:productId/download_links', function(req, res) {
     request.post({
       headers: {accept: req.headers.accept, authorization: req.headers.authorization },
       uri: `https://api.pixelsquid.com/api/products/${req.params.productId}/download_links`,
-      form: query.query
+      form: req.body
     }, function(apiErr, apiRes, apiBody) {
       res.headers = { 'Content-Type': 'application/json' };
       res.send(apiBody);

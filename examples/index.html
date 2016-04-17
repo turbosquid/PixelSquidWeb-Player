@@ -41,6 +41,7 @@
       <div class='atlas-control-area atlas-viewer'>
       </div>
       <div class='atlas-signature-image'>
+        <img id='atlas_signature_image' src=''/>
       </div>
     </div>
   </div>
@@ -83,10 +84,12 @@
         'data[attributes][session_id]=SESSION',
         'data[attributes][attachment]=true'
       ];
-      var url = 'http://localhost:8081/api/products/924832797581907663/download_links?' + params.join('&');
+      var url = 'http://localhost:8081/api/products/924832797581907663/download_links';
 
       $.ajax({
+        type: 'POST',
         url: url,
+        data: params.join('&'),
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
           'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
@@ -114,7 +117,7 @@
 
         //show a static image while loading
         var asset = adapter.getAsset();
-        $('.atlas-signature-image').html('<img src="' + asset.signature_image + '"/>');
+        $('#atlas_signature_image').attr('src', asset.signature_image);
 
         window.player = new PixelSquid.AtlasSpriteSheetPlayer({});
         window.player.load({ asset: asset });
