@@ -47,8 +47,7 @@ if (TARGET === 'start') {
   //Proxy API Requests
   //***
   const app = express();
-  //app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.text({ type: '*/*' }));
+  app.use(bodyParser.json({ type: '*/*' }));
 
   const crossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -63,7 +62,8 @@ if (TARGET === 'start') {
       headers: { accept: req.headers.accept, authorization: req.headers.authorization },
       uri: `http://api.pixelsquid.com/api/products/${req.params.productId}${query.search}`
     }, function(apiErr, apiRes, apiBody) {
-      res.headers = { 'Content-Type': 'application/json' };
+      //res.headers = { 'Content-Type': 'application/json' };
+      res.contentType('application/json');
       res.send(apiBody);
     });
   });
@@ -74,18 +74,20 @@ if (TARGET === 'start') {
       headers: { accept: req.headers.accept, authorization: req.headers.authorization },
       uri: `http://api.pixelsquid.com/api/products${query.search}`
     }, function(apiErr, apiRes, apiBody) {
-      res.headers = { 'Content-Type': 'application/json' };
+      res.contentType('application/json');
       res.send(apiBody);
     });
   });
 
   app.post('/api/products/:productId/download_links', function(req, res) {
+    var data = req.body;
+
     request.post({
-      headers: {accept: req.headers.accept, authorization: req.headers.authorization },
+      headers: { accept: req.headers.accept, authorization: req.headers.authorization },
       uri: `https://api.pixelsquid.com/api/products/${req.params.productId}/download_links`,
-      form: req.body
+      json: req.body
     }, function(apiErr, apiRes, apiBody) {
-      res.headers = { 'Content-Type': 'application/json' };
+      res.contentType('application/json');
       res.send(apiBody);
     });
   });

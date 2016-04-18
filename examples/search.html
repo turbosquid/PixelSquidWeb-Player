@@ -37,8 +37,6 @@
     });
 
     function doSearch(terms) {
-      console.log('request: ' + `http://localhost:8081/api/products?filter[query]=${terms}&page[size]=100`);
-
       $.ajax({
         url: `http://localhost:8081/api/products?filter[query]=${terms}&page[size]=100`,
         headers: {
@@ -48,13 +46,13 @@
       }).done(function(data) {
         $('.atlas-results').empty();
 
-        var response = JSON.parse(data);
-        for (index in response.data) {
-          var asset = response.data[index];
+        if (data.data) {
+          for (var i = 0; i < data.data.length; i++) {
+            var asset = data.data[i];
 
-          var html = `<div class='col-md-2 atlas-asset'><img src="${asset.attributes.search_preview_url}"><div class='asset-name'>${asset.attributes.name}</div></div>`;
-          $('.atlas-results').append(html);
-          console.log(asset);
+            var html = `<div class='col-md-2 atlas-asset'><img src="${asset.attributes.search_preview_url}"><div class='asset-name'>${asset.attributes.name}</div></div>`;
+            $('.atlas-results').append(html);
+          }
         }
       });
     }

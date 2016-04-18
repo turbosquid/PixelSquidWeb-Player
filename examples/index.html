@@ -75,29 +75,34 @@
     ///Download Hi-Res Image
     ///***
     $(document).on('click', '.download', function() {
-      var params = [
-        'data[type]=download_link',
-        'data[attributes][angle]=' + window.player.getCurrentImageIndex(),
-        'data[attributes][resolution]=2k',
-        'data[attributes][image_format]=png',
-        'data[attributes][client_ip]=127.0.0.1',
-        'data[attributes][session_id]=SESSION',
-        'data[attributes][attachment]=true'
-      ];
+      var params = {
+        data: {
+          type: 'download_link',
+          attributes: {
+            angle: window.player.getCurrentImageIndex(),
+            resolution: '2k',
+            image_format: 'png',
+            client_ip: '127.0.0.1',
+            session_id: 'SESSION',
+            attachment: true
+          }
+        }
+      };
+
       var url = 'http://localhost:8081/api/products/924832797581907663/download_links';
 
       $.ajax({
         type: 'POST',
         url: url,
-        data: params.join('&'),
+        data: JSON.stringify(params),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
           'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
         }
       }).done(function(data) {
-        console.log(data);
-        var response = JSON.parse(data);
-        $('#download_iframe').src = response.data.attributes.url;
+        $('#download_iframe').attr('src', data.data.attributes.url);
       });
     });
 
@@ -113,7 +118,7 @@
         }
       }).done(function(data) {
         var adapter = new PixelSquid.AtlasAPIAdapter();
-        adapter.parseResponse(JSON.parse(data));
+        adapter.parseResponse(data);
 
         //show a static image while loading
         var asset = adapter.getAsset();
