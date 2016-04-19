@@ -2,10 +2,10 @@ var AtlasControlAdapter = require('./atlas_control_adapter').AtlasControlAdapter
 var AtlasSphere = require('./atlas_sphere').AtlasSphere;
 var AtlasSpriteSheetControls = require('./atlas_sprite_sheet_controls').AtlasSpriteSheetControls;
 var AtlasImageWithProgress = require('./atlas_image_with_progress').AtlasImageWithProgress;
-var AtlasAvailableDownloadFormats = require('./atlas_available_download_formats').AtlasAvailableDownloadFormats;
+var $ = require("jquery");
 
 function AtlasSpriteSheetPlayer(configuration) {
-  this.VERSION = '1.2.2';
+  this.VERSION = '<!-- @version -->';
   this.VALID_LATITUDES = [
     'B',
     'C',
@@ -54,6 +54,7 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._elemParent           = configFetch('parent', '.atlas-events');
   this._useCanvas            = configFetch('useCanvas', true);
   this._useCanvasTranslation = configFetch('useCanvasTranslation', true);
+  this._useImageSmoothing    = configFetch('useImageSmoothing', false);
 
   this._atlasControlAdapter = new AtlasControlAdapter();
   this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter);
@@ -184,7 +185,6 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   this._url = null;
   this._atlasSphere = new AtlasSphere();
   this._atlasImage = new AtlasImageWithProgress();
-  this._downloadFormats = new AtlasAvailableDownloadFormats();
   if (typeof console !== 'undefined') {
     console.log('v' + this.VERSION);
   }
@@ -196,7 +196,7 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   }
   this._assetId = params.assetId;
   this._asset = params.asset;
-  this._initialImage = params.initialImage || 'H01';
+  this._initialImage = params.initialImage || params.asset.initial_image || 'H01';
   this._currentImage = this._initialImage;
   this._validLatitudes = this._asset.validLatitudes || this.VALID_LATITUDES;
   this._validLongitudes = this._asset.validLongitudes || this.VALID_LONGITUDES;
@@ -222,7 +222,6 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
     this.createDiv();
   }
   this._atlasSphere.initPartial(this._validLatitudes, this._validLongitudes, false, this._imageResolution);
-  this._downloadFormats.parseAsset(this._asset);
   $(this._elemEvents).trigger('atlas-load-start');
   var that = this;
   this._atlasImage.load(this._url, function (error, progress, image) {
@@ -254,8 +253,14 @@ AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground)
   this._currentImage = image || this._currentImage;
   var cell = this._atlasSphere.getSphereCellForIndex(this._currentImage);
   if (this._canvas && this._context && !forceBackground && !this._forceBackground) {
-    this._context.imageSmoothingEnabled = true;
-    this._context.mozImageSmoothingEnabled = true;
+    if (this._useImageSmoothing) {
+      this._context.imageSmoothingEnabled = true;
+      this._context.mozImageSmoothingEnabled = true;
+    }
+    else {
+      this._context.imageSmoothingEnabled = false;
+      this._context.mozImageSmoothingEnabled = false;
+    }
 
     if (this._useCanvasTranslation) {
       // This fixes an issue with Android downsampling images > 4096x4096
@@ -294,10 +299,6 @@ AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground)
     };
     $(this._div).css(css);
   }
-};
-
-AtlasSpriteSheetPlayer.prototype.getDownloadFormatsForView = function (view) {
-  return this._downloadFormats.getDownloadFormatsForView(view);
 };
 
 AtlasSpriteSheetPlayer.prototype.getCurrentImageIndex = function () {

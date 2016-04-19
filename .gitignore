@@ -11,4 +11,4 @@ s3.json
 /test/lib/atlas
 /test/lib/require.js
 /test/lib/underscore.js
-
+npm-debug.log
