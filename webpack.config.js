@@ -5,6 +5,8 @@ const express = require('express');
 const url = require('url');
 const request = require('request');
 const bodyParser = require('body-parser');
+const StringReplacementPlugin = require('string-replace-webpack-plugin');
+const info = require('./package.json');
 
 const TARGET = process.env.npm_lifecycle_event;
 
@@ -24,6 +26,19 @@ const common = {
         query: {
           presets: ['es2015']
         }
+      },
+      {
+        test: /atlas_sprite_sheet_player.js/,
+        loader: StringReplacementPlugin.replace({
+          replacements: [
+            {
+              pattern: /<!-- @version -->/ig,
+              replacement: function(match, pl, offset, string) {
+                return info.version;
+              }
+            }
+          ]
+        })
       }
     ]
   },
@@ -35,7 +50,10 @@ const common = {
     alias: {
       jquery: 'src/externals/jquery-1.12.3.min'
     }
-  }
+  },
+  plugins: [
+    new StringReplacementPlugin()
+  ]
 };
 
 if (TARGET === 'build' || !TARGET) {

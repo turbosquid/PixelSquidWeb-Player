@@ -5,7 +5,7 @@ var AtlasImageWithProgress = require('./atlas_image_with_progress').AtlasImageWi
 var $ = require("jquery");
 
 function AtlasSpriteSheetPlayer(configuration) {
-  this.VERSION = '1.2.2';
+  this.VERSION = '<!-- @version -->';
   this.VALID_LATITUDES = [
     'B',
     'C',
