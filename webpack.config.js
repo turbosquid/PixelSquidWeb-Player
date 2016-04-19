@@ -80,7 +80,6 @@ if (TARGET === 'start') {
       headers: { accept: req.headers.accept, authorization: req.headers.authorization },
       uri: `http://api.pixelsquid.com/api/products/${req.params.productId}${query.search}`
     }, function(apiErr, apiRes, apiBody) {
-      //res.headers = { 'Content-Type': 'application/json' };
       res.contentType('application/json');
       res.send(apiBody);
     });
