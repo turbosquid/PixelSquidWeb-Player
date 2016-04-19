@@ -7,7 +7,7 @@
   },
   "license": "",
   "description": "PixelSquid Atlas Player",
-  "repository": "https://github.com/turbosquid/atlas2",
+  "repository": "https://github.com/turbosquid/PixelSquidWeb-Player",
   "devDependencies": {
     "babel-core": "^6.7.6",
     "babel-loader": "^6.2.4",
