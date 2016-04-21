@@ -89,7 +89,8 @@
         }
       };
 
-      var url = 'http://localhost:8081/api/products/924832797581907663/download_links';
+      //the replacement of the hostname is just needed for this example since it is running through a "proxy"
+      var url = 'http://' + window.location.hostname + ':8081/api/products/924832797581907663/download_links';
 
       $.ajax({
         type: 'POST',
@@ -110,8 +111,9 @@
     ///Initialize the player and begin loading
     ///***
     $(function() {
+      //the replacement of the hostname is just needed for this example since it is running through a "proxy"
       $.ajax({
-        url: 'http://localhost:8081/api/products/924832797581907663?include=spinner',
+        url: 'http://' + window.location.hostname + ':8081/api/products/924832797581907663?include=spinner',
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
           'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
@@ -124,7 +126,13 @@
         var asset = adapter.getAsset();
         $('#atlas_signature_image').attr('src', asset.signature_image);
 
-        window.player = new PixelSquid.AtlasSpriteSheetPlayer({});
+        var preferredImageSize = 600;
+        //use smaller resolution images for mobile
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+          preferredImageSize = 300;
+        }
+
+        window.player = new PixelSquid.AtlasSpriteSheetPlayer({ preferredImageSize: preferredImageSize });
         window.player.load({ asset: asset });
       });
     });

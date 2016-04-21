@@ -109,8 +109,8 @@ if (TARGET === 'start') {
     });
   });
 
-  app.listen(8081, function() {
-    console.log('http://localhost:8081');
+  app.listen(8081, '0.0.0.0', function() {
+    console.log('http://0.0.0.0:8081');
     console.log('api proxy: localhost -> api.pixelsquid.com');
     console.log();
   });
