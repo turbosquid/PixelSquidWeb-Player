@@ -38,7 +38,7 @@
 
     function doSearch(terms) {
       $.ajax({
-        url: `http://localhost:8081/api/products?filter[query]=${terms}&page[size]=100`,
+        url: `http://${window.location.hostname}:8081/api/products?filter[query]=${terms}&page[size]=100`,
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
           'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
