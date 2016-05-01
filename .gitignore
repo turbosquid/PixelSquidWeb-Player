@@ -6,7 +6,6 @@ app/bower_components
 docs/*
 puppet/modules/*
 .config
-dist
 s3.json
 /test/lib/atlas
 /test/lib/require.js
