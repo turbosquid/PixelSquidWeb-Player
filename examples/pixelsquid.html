@@ -1,0 +1,331 @@
+<!doctype HTML>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>PixelSquid Atlas - Basic Loading</title>
+  <link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'/>
+  <link rel='stylesheet' href='./styles/joyride-2.1.css'/>
+  <script src='../src/externals/jquery-1.12.3.min.js'></script>
+  <script src='./js/jquery.joyride-2.1.js'></script>
+  <script src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script>
+  <style>
+    body {
+      font-family: "Proxima Nova", "Open Sans", helvetica, arial, sans-serif;
+    }
+
+    .background-container {
+      position: relative;
+    }
+
+    .background-image {
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    .gallery-cells-anchor {
+      position: absolute;
+      right: 36%;
+      top: 40.8%;
+      width: 4.4%;
+      height: 10%;
+      z-index: 2;
+    }
+
+    .gallery-cells {
+      position: absolute;
+      right: 35%;
+      top: 42.8%;
+      width: 4.4%;
+      height: 8%;
+      z-index: 2;
+    }
+
+    .spinner-anchor {
+      position: absolute;
+      width: 13%;
+      height: 27.5%;
+      right: 26%;
+      top: 40%;
+    }
+
+    .atlas-container {
+      position: absolute;
+      width: 13%;
+      height: 23.9%;
+      right: 26%;
+      top: 42.7%;
+      display: none;
+      z-index: 3;
+    }
+
+    .placement-container {
+      position: absolute;
+      width: 23.5%;
+      height: 41.5%;
+      left: 30%;
+      top: 40%;
+      border: 0px;
+    }
+
+    .placement-container img {
+      width: 100%;
+    }
+
+    .pixelsquid-tour {
+      background-color: #ed145b;
+      color: white;
+    }
+
+    .joyride-nub {
+      border-color: #ed145b !important;
+    }
+
+    #pixelsquid_walkthrough {
+      display: none;
+    }
+
+    .selected-layers {
+      display: none;
+      width: 17%;
+      position: absolute;
+      right: 5%;
+      top: 38.0%;
+    }
+
+    .spinner-panel {
+      display: none;
+      position: absolute;
+      right: 24.8%;
+      width: 15.4%;
+      top: 33.3%;
+    }
+
+    .spinner-panel-overlay {
+      display: none;
+      position: absolute;
+      right: 25.3%;
+      width: 14.3%;
+      top: 41.3%;
+      height: 25.1%;
+      background-color: #ABABAB;
+      opacity: 0.75;
+    }
+
+    .more-information {
+      position: absolute;
+      width: 50%;
+      left: 25%;
+      top: 10%;
+      text-align: center;
+      z-index: 4;
+      border-radius: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class='background-container'>
+    <img class='img-responsive background-image' src='./images/gallery_background.png'/>
+
+    <div id='more_information' class='pixelsquid-tour more-information'>
+      <h3>Ready to Download the Plugin?</h3>
+      <p>Download the plugin from Adobe, or use one of our custom installers for Mac OS or Windows</p>
+      <p>
+        <button class='btn btn-default'>Adobe</button>
+        <button class='btn btn-default'>Mac OS</button>
+        <button class='btn btn-default'>Windows</button>
+      </p>
+    </div>
+
+    <div id='gallery_cells_anchor' class='gallery-cells-anchor'>
+    </div>
+
+    <div id='gallery_cells' class='gallery-cells'>
+    </div>
+
+    <div id='spinner_anchor' class='spinner-anchor'>
+    </div>
+
+    <div id='spinner' class='atlas-container'>
+      <div class='atlas-events'>
+        <div class='atlas-control-area atlas-viewer'>
+        </div>
+      </div>
+    </div>
+
+    <div id='placement' class='placement-container'>
+      <img id='placement_image' src=''/>
+    </div>
+
+    <div id='selected_layers'>
+      <img class='selected-layers' src='./images/selected_layers.png'/>
+    </div>
+
+    <div id='spinner_panel'>
+      <img class='spinner-panel' src='./images/spinner_panel.png'/>
+    </div>
+
+    <div id='spinner_panel' class='spinner-panel-overlay'>
+    </div>
+  </div>
+
+  <ol id='pixelsquid_walkthrough'>
+    <li class='pixelsquid-tour' data-options='tipLocation:top; tipAnimation:fade' data-id='gallery_cells_anchor'>
+      <h4>Add Item</h4>
+      <p/>
+      <p>Click on the object in the gallery to add to your composition.</p>
+      <p>More items can be added by using the `Add to Photoshop` button in search results.</p>
+    </li>
+
+    <li class='pixelsquid-tour' data-options='tipLocation:top; tipAnimation:fade' data-id='spinner_anchor'>
+      <h4>Spin Object</h4>
+      <p/>
+      <p>After the object loads, you can click and drag in this window to spin the object.</p>
+    </li>
+
+    <li class='pixelsquid-tour' data-options='tipLocation:left; tipAnimation:fade; width:350px' data-id='placement'>
+      <h4>Match Angle</h4>
+      <p/>
+      <p>As you rotate, the object updates so you select the most natural angle.</p>
+      <p>Every image is available with pixel-perfect transparency, with or without shadows, and as 600 or 2k pngs.</p>
+      <p>For extra control, you can download the layered PSD file and embed as a smart object or extract the layers directly in your composition.</p>
+    </li>
+  </ol>
+
+  <script>
+    function loadPlayer() {
+      var initialImage = 'H03';
+
+      loadImage(initialImage);
+
+      //get the size of the current player window
+      var playerWidth = $('.atlas-container').css('width');
+      var playerHeight = $('.atlas-container').css('height');
+      var playerSize = Math.min(parseInt(playerHeight), parseInt(playerWidth));
+
+      //the replacement of the hostname is just needed for this example since it is running through a "proxy"
+      $.ajax({
+        url: 'http://' + window.location.hostname + ':8081/api/products/924832797581907663?include=spinner',
+        headers: {
+          'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
+          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
+        }
+      }).done(function(data) {
+        var adapter = new PixelSquid.AtlasAPIAdapter();
+        adapter.parseResponse(data);
+
+        //show a static image while loading
+        var asset = adapter.getAsset();
+
+        var preferredImageSize = 600;
+        //use smaller resolution images for mobile
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+          preferredImageSize = 300;
+        }
+
+        window.player = new PixelSquid.AtlasSpriteSheetPlayer({ windowSize: playerSize, preferredImageSize: preferredImageSize });
+        window.player.load({ initialImage: initialImage, asset: asset });
+      });
+    }
+
+    function loadImage(image) {
+      var params = {
+        data: {
+          type: 'download_link',
+          attributes: {
+            angle: image,
+            resolution: '600',
+            image_format: 'png',
+            client_ip: '127.0.0.1',
+            session_id: 'SESSION',
+            attachment: false
+          }
+        }
+      };
+
+      //the replacement of the hostname is just needed for this example since it is running through a "proxy"
+      var url = 'http://' + window.location.hostname + ':8081/api/products/924832797581907663/download_links';
+
+      $.ajax({
+        type: 'POST',
+        url: url,
+        data: JSON.stringify(params),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        headers: {
+          'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
+          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
+        }
+      }).done(function(data) {
+        $('#placement_image').attr('src', data.data.attributes.url);
+      });
+    }
+
+    window.player = null;
+    window.firstRotation = true;
+
+    ///***
+    ///Loading Progress
+    ///***
+    $(document).on('atlas-load-start', '.atlas-events', function() {
+    });
+
+    $(document).on('atlas-load-progress', '.atlas-events', function(element, data) {
+    });
+
+    $(document).on('atlas-load-complete', '.atlas-events', function(element, data) {
+      $('.atlas-container').show();
+      $('.spinner-panel-overlay').hide();
+    });
+
+    $(document).on('atlas-image-changed', '.atlas-events', function(element, data) {
+      var nextImage = data.nextImage;
+      setTimeout(function() {
+        if (nextImage == window.player.getCurrentImageIndex()) {
+          loadImage(window.player.getCurrentImageIndex());
+        }
+
+        if (window.firstRotation) {
+          $(window).joyride('nextTip');
+          window.firstRotation = false;
+          setTimeout(function() {
+            $('#more_information').show();
+          }, 2000);
+        }
+      }, 500);
+    });
+
+    ///***
+    ///Initialize the player and begin loading
+    ///***
+    $(document).ready(function() {
+      $(window).resize(function() {
+        var playerWidth = $('.atlas-container').css('width');
+        var playerHeight = $('.atlas-container').css('height');
+        var playerSize = Math.min(parseInt(playerHeight), parseInt(playerWidth));
+
+        if (window.player) {
+          window.player.resizeWindow(playerSize);
+        }
+      });
+
+      $('#pixelsquid_walkthrough').joyride({ 
+        autoStart: true,
+        nextButton: false,
+        template: {
+          link: ''
+        }
+      });
+
+      $('.gallery-cells').click(function(e) {
+        $(window).joyride('nextTip');
+        $('.selected-layers').show();
+        $('.spinner-panel').show();
+        $('.spinner-panel-overlay').show();
+        loadPlayer();
+      });
+    });
+    </script>
+  <script src='../../pixelsquid-atlas.js'></script>
+</body>
+</html>
