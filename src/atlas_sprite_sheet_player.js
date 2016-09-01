@@ -55,7 +55,6 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._useCanvas            = configFetch('useCanvas', true);
   this._useCanvasTranslation = configFetch('useCanvasTranslation', true);
   this._useImageSmoothing    = configFetch('useImageSmoothing', false);
-
   this._atlasControlAdapter = new AtlasControlAdapter();
   this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter);
   this._canvas = null;
@@ -216,6 +215,7 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   }
   this._backgroundScale = 1;
   this._backgroundScale = this._windowSize / this._imageResolution;
+
   if (!this._forceBackground) {
     this.createCanvas();
   } else {
@@ -308,5 +308,38 @@ AtlasSpriteSheetPlayer.prototype.getCurrentImageIndex = function () {
 AtlasSpriteSheetPlayer.prototype.isCanvasRender = function () {
   return this._canvas && this._context;
 };
+
+AtlasSpriteSheetPlayer.prototype.resizeWindow = function (windowSize) {
+  this._windowSize = windowSize;
+  this._backgroundScale = this._windowSize / this._imageResolution;
+
+  var devicePixelRatio = window.devicePixelRatio || 1;
+  var backingStoreRatio = this._context.webkitBackingStorePixelRatio || this._context.mozBackingStorePixelRatio || this._context.msBackingStorePixelRatio || this._context.oBackingStorePixelRatio || this._context.backingStorePixelRatio || 1;
+  var ratio = devicePixelRatio / backingStoreRatio;
+  this._canvasResolution = ratio * this._windowSize;
+
+  var d = null;
+  if (this.isCanvasRender()) {
+    d = $(this._canvas);
+    d.attr('width', this._canvasResolution);
+    d.attr('height', this._canvasResolution);
+  }
+  else {
+    d = $(this._div);
+    d.attr('width', this._windowSize);
+    d.attr('height', this._windowSize);
+  }
+
+  d.css('width', [
+    this._windowSize,
+    'px'
+  ].join(''));
+  d.css('height', [
+    this._windowSize,
+    'px'
+  ].join(''));
+
+  this.renderImage(this._currentImage, false);
+}
 
 exports.AtlasSpriteSheetPlayer = AtlasSpriteSheetPlayer;
