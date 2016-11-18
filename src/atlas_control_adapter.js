@@ -1,11 +1,12 @@
 'use strict';
 var AtlasClientCapabilities = require('./atlas_client_capabilities').AtlasClientCapabilities;
 
-exports.AtlasControlAdapter = function (context) {
+exports.AtlasControlAdapter = function (jquery) {
   this._dragging = false;
   this._domElement = null;
   this._cellWidthInPixels = 10;
   this._cellHeightInPixels = 10;
+  this._$ = jquery;
 
   if (AtlasClientCapabilities.getCapabilities().isRetinaCapable) {
     this._cellWidthInPixels /= 2;
@@ -72,20 +73,15 @@ exports.AtlasControlAdapter = function (context) {
       this._positionInCell.y = this._nextPositionInCell.y;
     }
     if (this._domElement && (Math.abs(horizontal) > 0 || Math.abs(vertical) > 0)) {
-      if (AtlasClientCapabilities.getCapabilities().eventListener) {
+      if (this._$) {
+        this._$(this._domElement).trigger(this._changeEvent.type, [{ horizontal: horizontal, vertical: vertical }]);
+      }
+      else {
         var event = document.createEvent('Event');
         event.initEvent(this._changeEvent.type, true, true);
         event.horizontal = horizontal;
         event.vertical = vertical;
         this._domElement.dispatchEvent(event);
-      } else {
-        if (AtlasClientCapabilities.getCapabilities().jqueryEvents) {
-          jQuery(document).triggerHandler(this._changeEvent.type, {
-            type: this._changeEvent.type,
-            horizontal: horizontal,
-            vertical: vertical
-          });
-        }
       }
     }
   };
