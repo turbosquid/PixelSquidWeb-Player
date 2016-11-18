@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jQuery"));
+		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define(["jQuery"], factory);
+		define([], factory);
 	else if(typeof exports === 'object')
-		exports["PixelSquid"] = factory(require("jQuery"));
+		exports["PixelSquid"] = factory();
 	else
-		root["PixelSquid"] = factory(root["jQuery"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_7__) {
+		root["PixelSquid"] = factory();
+})(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	var AtlasSpriteSheetPlayer = __webpack_require__(1).AtlasSpriteSheetPlayer;
-	var AtlasAPIAdapter = __webpack_require__(8).AtlasAPIAdapter;
+	var AtlasAPIAdapter = __webpack_require__(7).AtlasAPIAdapter;
 
 	exports.AtlasSpriteSheetPlayer = AtlasSpriteSheetPlayer;
 	exports.AtlasAPIAdapter = AtlasAPIAdapter;
@@ -71,14 +71,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	var AtlasControlAdapter = __webpack_require__(2).AtlasControlAdapter;
 	var AtlasSphere = __webpack_require__(4).AtlasSphere;
 	var AtlasSpriteSheetControls = __webpack_require__(5).AtlasSpriteSheetControls;
 	var AtlasImageWithProgress = __webpack_require__(6).AtlasImageWithProgress;
-	var $ = __webpack_require__(7);
 
 	function AtlasSpriteSheetPlayer(configuration) {
-	  this.VERSION = '2.3.0';
+	  this.VERSION = '2.4.0';
 	  this.VALID_LATITUDES = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
 	  this.VALID_LONGITUDES = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16'];
 
@@ -96,31 +97,151 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._useCanvas = configFetch('useCanvas', true);
 	  this._useCanvasTranslation = configFetch('useCanvasTranslation', true);
 	  this._useImageSmoothing = configFetch('useImageSmoothing', false);
-	  this._atlasControlAdapter = new AtlasControlAdapter();
-	  this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter);
+	  this._$ = configuration.jquery;
+	  this._applyStyles = configFetch('applyStyles', false);
+	  this._atlasControlAdapter = new AtlasControlAdapter(configuration.jquery);
+	  this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter, configuration.jquery);
 	  this._canvas = null;
 	  this._context = null;
 	  this._div = null;
 	  this._url = null;
 	  this._imageResolution = 0;
 	  this._canvasResolution = 0;
+
 	  var that = this;
-	  $(this._elemControlArea).on('change', function (evt, data) {
-	    var horizontal, vertical;
-	    if (typeof data !== 'undefined') {
-	      horizontal = data.horizontal;
-	      vertical = data.vertical;
-	    }
-	    horizontal = horizontal || evt.horizontal || evt.originalEvent.horizontal;
-	    vertical = vertical || evt.vertical || evt.originalEvent.vertical;
-	    that.rotate(horizontal, vertical);
-	  });
+	  if (this._$) {
+	    this._$(this._elemControlArea).on('change', function (evt, data) {
+	      that._onControlAreaChange(evt, data);
+	    });
+	  } else {
+	    this.addEventListener(this._elemControlArea, 'change', function (evt) {
+	      var data = { horizontal: evt.horizontal, vertical: evt.vertical };
+	      that._onControlAreaChange(evt, data);
+	    }, false);
+	  }
 	}
+
+	AtlasSpriteSheetPlayer.prototype._onControlAreaChange = function (evt, data) {
+	  var horizontal, vertical;
+
+	  if (typeof evt.originalEvent !== 'undefined') {
+	    horizontal = evt.originalEvent.horizontal;
+	    vertical = evt.originalEvent.vertical;
+	  }
+	  if (typeof data !== 'undefined') {
+	    horizontal = data.horizontal;
+	    vertical = data.vertical;
+	  }
+	  horizontal = horizontal || evt.horizontal || 0;
+	  vertical = vertical || evt.vertical || 0;
+
+	  this.rotate(horizontal, vertical);
+	};
+
+	AtlasSpriteSheetPlayer.prototype.addEventListener = function (elem, event, callback) {
+	  var element = document.querySelectorAll(elem);
+	  if (element && element.length) {
+	    element[0].addEventListener(event, callback, false);
+	  }
+	};
+
+	AtlasSpriteSheetPlayer.prototype.triggerEvent = function (elem, event, data) {
+	  if (this._$) {
+	    this._$(elem).trigger(event, [data]);
+	  } else {
+	    var element = document.querySelectorAll(elem);
+	    if (element && element.length) {
+	      if (typeof CustomEvent === 'undefined') {
+	        console.log('IE11 fallback');
+	        var eventObject = document.createEvent('Event');
+	        eventObject.initEvent(event, true, true);
+	        eventObject.detail = data;
+	        element[0].dispatchEvent(eventObject);
+	      } else {
+	        element[0].dispatchEvent(new CustomEvent(event, { 'detail': data }));
+	      }
+	    }
+	  }
+	};
+
+	AtlasSpriteSheetPlayer.prototype._getDomElement = function (elem) {
+	  var element = elem;
+	  if ((typeof element === 'undefined' ? 'undefined' : _typeof(element)) !== 'object') {
+	    element = document.querySelectorAll(elem);
+	    if (element && element.length) {
+	      return element[0];
+	    } else {
+	      return null;
+	    }
+	  }
+
+	  return element;
+	};
+
+	AtlasSpriteSheetPlayer.prototype.resizeElement = function (elem, attrSize, styleSize) {
+	  var element = this._getDomElement(elem);
+	  if (element) {
+	    element.setAttribute('width', attrSize);
+	    element.setAttribute('height', attrSize);
+
+	    if (this._applyStyles) {
+	      element.style.width = [styleSize, 'px'].join('');
+	      element.style.height = [styleSize, 'px'].join('');
+	    }
+	  }
+	};
+
+	AtlasSpriteSheetPlayer.prototype.positionElement = function (elem, left, top) {
+	  var element = this._getDomElement(elem);
+	  if (element && this._applyStyles) {
+	    element.style.position = 'absolute';
+	    element.style.top = [top, 'px'].join('');
+	    element.style.left = [left, 'px'].join('');
+	  }
+	};
+
+	AtlasSpriteSheetPlayer.prototype.hide = function (elem) {
+	  var element = this._getDomElement(elem);
+	  if (element) {
+	    element.style.display = 'none';
+	  }
+	};
+
+	AtlasSpriteSheetPlayer.prototype.show = function (elem) {
+	  var element = this._getDomElement(elem);
+	  if (element) {
+	    element.style.display = 'block';
+	  }
+	};
+
+	AtlasSpriteSheetPlayer.prototype.append = function (parent, child) {
+	  var parentElement = this._getDomElement(parent);
+	  var childElement = this._getDomElement(child);
+	  if (parentElement && childElement) {
+	    parentElement.appendChild(childElement);
+	  }
+	};
+
+	AtlasSpriteSheetPlayer.prototype.renderCssCell = function (cell) {
+	  var element = this._getDomElement(this._div);
+	  if (element) {
+	    if (this._applyStyles) {
+	      element.style.width = this._windowSize;
+	      element.style.height = this._windowSize;
+	    }
+
+	    element.style['background-image'] = ['url("', this._url, '")'].join('');
+	    element.style['background-position'] = ['-', cell.left * this._backgroundScale, 'px -', cell.top * this._backgroundScale, 'px'].join('');
+	    element.style['background-size'] = [16 * this._imageResolution * this._backgroundScale, 'px ', this._validLatitudes.length * this._imageResolution * this._backgroundScale, 'px'].join('');
+	  }
+	};
+
 	AtlasSpriteSheetPlayer.prototype.adjustValidLatitudes = function (cameraType) {
 	  if (cameraType === 'top_half') {
 	    this._validLatitudes = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 	  }
 	};
+
 	AtlasSpriteSheetPlayer.prototype.rotate = function (horizontal, vertical) {
 	  if (!this._currentImage) {
 	    return;
@@ -142,16 +263,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    longitudeIndex -= this._atlasSphere._longitudes;
 	  }
 	  var imageIndex = this._validLatitudes[latitudeIndex] + this._validLongitudes[longitudeIndex];
-	  $(this._elemEvents).trigger('atlas-image-changed', [{
-	    currentImage: this._currentImage,
-	    nextImage: imageIndex
-	  }]);
+	  this.triggerEvent(this._elemEvents, 'atlas-image-changed', { currentImage: this._currentImage, nextImage: imageIndex });
 	  this.setNextImageIndex(imageIndex);
 	};
+
 	AtlasSpriteSheetPlayer.prototype.setNextImageIndex = function (imageIndex) {
 	  this._currentImage = imageIndex;
 	  this.renderImage();
 	};
+
 	AtlasSpriteSheetPlayer.prototype.createCanvas = function () {
 	  try {
 	    this._canvas = document.createElement('canvas');
@@ -168,31 +288,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var backingStoreRatio = this._context.webkitBackingStorePixelRatio || this._context.mozBackingStorePixelRatio || this._context.msBackingStorePixelRatio || this._context.oBackingStorePixelRatio || this._context.backingStorePixelRatio || 1;
 	  var ratio = devicePixelRatio / backingStoreRatio;
 	  this._canvasResolution = ratio * this._windowSize;
-	  var c = $(this._canvas);
-	  c.attr('width', this._canvasResolution);
-	  c.attr('height', this._canvasResolution);
-	  c.css('width', [this._windowSize, 'px'].join(''));
-	  c.css('height', [this._windowSize, 'px'].join(''));
-	  c.css('position', 'absolute');
-	  c.css('top', '0px');
-	  c.css('left', '0px');
-	  c.hide();
-	  $(this._elemViewer).append(this._canvas);
+	  this.resizeElement(this._canvas, this._canvasResolution, this._windowSize);
+	  this.positionElement(this._canvas, 0, 0);
+	  this.hide(this._canvas);
+	  this.append(this._elemViewer, this._canvas);
 	  return true;
 	};
+
 	AtlasSpriteSheetPlayer.prototype.createDiv = function () {
+	  console.log('creating div');
 	  this._div = document.createElement('div');
-	  var d = $(this._div);
-	  d.attr('width', this._windowSize);
-	  d.attr('height', this._windowSize);
-	  d.css('width', [this._windowSize, 'px'].join(''));
-	  d.css('height', [this._windowSize, 'px'].join(''));
-	  d.css('position', 'absolute');
-	  d.css('top', '0px');
-	  d.css('left', '0px');
-	  d.hide();
-	  $(this._elemViewer).append(this._div);
+	  this.resizeElement(this._div, this._windowSize, this._windowSize);
+	  this.positionElement(this._div, 0, 0);
+	  this.hide(this._div);
+	  this.append(this._elemViewer, this._div);
 	};
+
 	AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
 	  this._assetId = null;
 	  this._asset = null;
@@ -237,34 +348,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._backgroundScale = this._windowSize / this._imageResolution;
 
 	  if (!this._forceBackground) {
-	    this.createCanvas();
+	    if (!this.createCanvas()) {
+	      this.createDiv();
+	    }
 	  } else {
 	    this.createDiv();
 	  }
 	  this._atlasSphere.initPartial(this._validLatitudes, this._validLongitudes, false, this._imageResolution);
-	  $(this._elemEvents).trigger('atlas-load-start');
+	  this.triggerEvent(this._elemEvents, 'atlas-load-start');
 	  var that = this;
 	  this._atlasImage.load(this._url, function (error, progress, image) {
 	    if (error) {
-	      $(that._elemEvents).trigger('atlas-load-error', [{ error: error }]);
+	      that.triggerEvent(that._elemEvents, 'atlas-load-error', { error: error });
 	      callback(error, null);
 	    }
 	    if (!image && progress < 100) {
-	      $(that._elemEvents).trigger('atlas-load-progress', [{ progress: progress / 100 }]);
+	      that.triggerEvent(that._elemEvents, 'atlas-load-progress', { progress: progress / 100 });
 	    }
 	    if (image && progress >= 100) {
 	      that.renderImage();
 
 	      if (that._canvas && that._context) {
-	        $(that._canvas).show();
+	        that.show(that._canvas);
 	      } else {
-	        $(that._div).show();
+	        that.show(that._div);
 	      }
 	      if (callback) {
 	        callback(null, image);
 	      }
-	      $(that._elemEvents).trigger('atlas-load-interactivity');
-	      $(that._elemEvents).trigger('atlas-load-complete', [{ image: image }]);
+	      that.triggerEvent(that._elemEvents, 'atlas-load-interactivity');
+	      that.triggerEvent(that._elemEvents, 'atlas-load-complete', { image: image });
 	    }
 	  });
 	};
@@ -294,14 +407,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this._context.drawImage(this._atlasImage.image, cell.left, cell.top, this._imageResolution, this._imageResolution, 0, 0, this._canvasResolution, this._canvasResolution);
 	    }
 	  } else {
-	    var css = {
-	      'width': this._windowSize,
-	      'height': this._windowSize,
-	      'background-image': ['url("', this._url, '")'].join(''),
-	      'background-position': ['-', cell.left * this._backgroundScale, 'px -', cell.top * this._backgroundScale, 'px'].join(''),
-	      'background-size': [16 * this._imageResolution * this._backgroundScale, 'px ', this._validLatitudes.length * this._imageResolution * this._backgroundScale, 'px'].join('')
-	    };
-	    $(this._div).css(css);
+	    this.renderCssCell(cell);
 	  }
 	};
 
@@ -324,17 +430,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var d = null;
 	  if (this.isCanvasRender()) {
-	    d = $(this._canvas);
-	    d.attr('width', this._canvasResolution);
-	    d.attr('height', this._canvasResolution);
+	    this.resizeElement(this._canvas, this._canvasResolution, this._windowSize);
 	  } else {
-	    d = $(this._div);
-	    d.attr('width', this._windowSize);
-	    d.attr('height', this._windowSize);
+	    this.resizeElement(this._div, this._windowSize, this._windowSize);
 	  }
-
-	  d.css('width', [this._windowSize, 'px'].join(''));
-	  d.css('height', [this._windowSize, 'px'].join(''));
 
 	  this.renderImage(this._currentImage, false);
 	};
@@ -349,11 +448,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var AtlasClientCapabilities = __webpack_require__(3).AtlasClientCapabilities;
 
-	exports.AtlasControlAdapter = function (context) {
+	exports.AtlasControlAdapter = function (jquery) {
 	  this._dragging = false;
 	  this._domElement = null;
 	  this._cellWidthInPixels = 10;
 	  this._cellHeightInPixels = 10;
+	  this._$ = jquery;
 
 	  if (AtlasClientCapabilities.getCapabilities().isRetinaCapable) {
 	    this._cellWidthInPixels /= 2;
@@ -420,20 +520,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this._positionInCell.y = this._nextPositionInCell.y;
 	    }
 	    if (this._domElement && (Math.abs(horizontal) > 0 || Math.abs(vertical) > 0)) {
-	      if (AtlasClientCapabilities.getCapabilities().eventListener) {
+	      if (this._$) {
+	        this._$(this._domElement).trigger(this._changeEvent.type, [{ horizontal: horizontal, vertical: vertical }]);
+	      } else {
 	        var event = document.createEvent('Event');
 	        event.initEvent(this._changeEvent.type, true, true);
 	        event.horizontal = horizontal;
 	        event.vertical = vertical;
 	        this._domElement.dispatchEvent(event);
-	      } else {
-	        if (AtlasClientCapabilities.getCapabilities().jqueryEvents) {
-	          jQuery(document).triggerHandler(this._changeEvent.type, {
-	            type: this._changeEvent.type,
-	            horizontal: horizontal,
-	            vertical: vertical
-	          });
-	        }
 	      }
 	    }
 	  };
@@ -699,11 +793,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var AtlasClientCapabilities = __webpack_require__(3).AtlasClientCapabilities;
 
-	var AtlasSpriteSheetControls = function AtlasSpriteSheetControls(parentSelector, domSelector, controlAdapter) {
+	var AtlasSpriteSheetControls = function AtlasSpriteSheetControls(parentSelector, domSelector, controlAdapter, jquery) {
 
+	  this._$ = jquery;
 	  this._parentSelector = parentSelector;
 	  this._domSelector = domSelector;
-	  this._domElement = $(this._domSelector)[0];
+
+	  if (this._$) {
+	    this._domElement = $(this._domSelector)[0];
+	  } else {
+	    this._domElement = document.querySelectorAll(this._domSelector)[0];
+	  }
+
 	  this._controlAdapter = controlAdapter;
 	  this._windowHalfX = 300;
 	  this._windowHalfY = 300;
@@ -748,17 +849,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._windowHalfX = this._domElement.clientWidth / 2;
 	    this._windowHalfY = this._domElement.clientHeight / 2;
 
-	    $(this._parentSelector).on('contextmenu.player', this._domSelector, function (e) {
-	      e.preventDefault();
-	    });
+	    if (this._$) {
+	      $(this._parentSelector).on('contextmenu.player', this._domSelector, function (e) {
+	        e.preventDefault();
+	      });
 
-	    $(this._parentSelector).on(touchStartEvent + '.player', this._domSelector, onTouchStart);
-	    $(this._parentSelector).on('mousedown.player', this._domSelector, onMouseDown);
-	    $(this._parentSelector).on('mouseup.player', this._domSelector, onMouseUp);
-	    $(this._parentSelector).on('mousemove.player', this._domSelector, onMouseMove);
-	    $(this._parentSelector).on('mouseout.player', this._domSelector, onMouseOut);
-	    $(this._parentSelector).on(touchMoveEvent + '.player', this._domSelector, onTouchMove);
-	    $(this._parentSelector).on(touchEndEvent + '.player', this._domSelector, onTouchEnd);
+	      $(this._parentSelector).on(touchStartEvent + '.player', this._domSelector, onTouchStart);
+	      $(this._parentSelector).on('mousedown.player', this._domSelector, onMouseDown);
+	      $(this._parentSelector).on('mouseup.player', this._domSelector, onMouseUp);
+	      $(this._parentSelector).on('mousemove.player', this._domSelector, onMouseMove);
+	      $(this._parentSelector).on('mouseout.player', this._domSelector, onMouseOut);
+	      $(this._parentSelector).on(touchMoveEvent + '.player', this._domSelector, onTouchMove);
+	      $(this._parentSelector).on(touchEndEvent + '.player', this._domSelector, onTouchEnd);
+	    } else {
+	      this._domElement.addEventListener('contextmenu', function (evt) {
+	        evt.preventDefault();
+	      });
+	      this._domElement.addEventListener(touchStartEvent, onTouchStart);
+	      this._domElement.addEventListener('mousedown', onMouseDown);
+	      this._domElement.addEventListener('mouseup', onMouseUp);
+	      this._domElement.addEventListener('mousemove', onMouseMove);
+	      this._domElement.addEventListener('mouseout', onMouseOut);
+	      this._domElement.addEventListener(touchMoveEvent, onTouchMove);
+	      this._domElement.addEventListener(touchEndEvent, onTouchEnd);
+	    }
 
 	    this._enabled = true;
 	  };
@@ -1054,12 +1168,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
-
-/***/ },
-/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
