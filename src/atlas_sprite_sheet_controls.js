@@ -1,20 +1,28 @@
 'use strict';
 var AtlasClientCapabilities = require('./atlas_client_capabilities').AtlasClientCapabilities;
 
-var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAdapter) {
+var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAdapter, jquery) {
 
+  this._$ = jquery;
   this._parentSelector = parentSelector;
   this._domSelector = domSelector;
-  this._domElement = $(this._domSelector)[0];
+
+  if (this._$) {
+    this._domElement = $(this._domSelector)[0];
+  }
+  else {
+    this._domElement = document.querySelectorAll(this._domSelector)[0];
+  }
+
   this._controlAdapter = controlAdapter;
   this._windowHalfX = 300;
   this._windowHalfY = 300;
 
   this._dragEvent = {
-    type: 'canvasDrag',
+    type:      'canvasDrag',
     dragStart: 'beforeDrag',
-    dragging: 'dragging',
-    dragEnd: 'finishDrag'
+    dragging:  'dragging',
+    dragEnd:   'finishDrag'
   };
 
   this._enabled = false;
@@ -50,17 +58,31 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
     this._windowHalfX = this._domElement.clientWidth / 2;
     this._windowHalfY = this._domElement.clientHeight / 2;
 
-    $(this._parentSelector).on('contextmenu.player', this._domSelector, function (e) {
-      e.preventDefault();
-    });
+    if (this._$) {
+      $(this._parentSelector).on('contextmenu.player', this._domSelector, function (e) {
+        e.preventDefault();
+      });
 
-    $(this._parentSelector).on(touchStartEvent + '.player', this._domSelector, onTouchStart);
-    $(this._parentSelector).on('mousedown.player', this._domSelector, onMouseDown);
-    $(this._parentSelector).on('mouseup.player', this._domSelector, onMouseUp);
-    $(this._parentSelector).on('mousemove.player', this._domSelector, onMouseMove);
-    $(this._parentSelector).on('mouseout.player', this._domSelector, onMouseOut);
-    $(this._parentSelector).on(touchMoveEvent + '.player', this._domSelector, onTouchMove);
-    $(this._parentSelector).on(touchEndEvent + '.player', this._domSelector, onTouchEnd);
+      $(this._parentSelector).on(touchStartEvent + '.player', this._domSelector, onTouchStart);
+      $(this._parentSelector).on('mousedown.player', this._domSelector, onMouseDown);
+      $(this._parentSelector).on('mouseup.player', this._domSelector, onMouseUp);
+      $(this._parentSelector).on('mousemove.player', this._domSelector, onMouseMove);
+      $(this._parentSelector).on('mouseout.player', this._domSelector, onMouseOut);
+      $(this._parentSelector).on(touchMoveEvent + '.player', this._domSelector, onTouchMove);
+      $(this._parentSelector).on(touchEndEvent + '.player', this._domSelector, onTouchEnd);
+    }
+    else {
+      this._domElement.addEventListener('contextmenu', function(evt) {
+        evt.preventDefault();
+      });
+      this._domElement.addEventListener(touchStartEvent, onTouchStart);
+      this._domElement.addEventListener('mousedown', onMouseDown);
+      this._domElement.addEventListener('mouseup', onMouseUp);
+      this._domElement.addEventListener('mousemove', onMouseMove);
+      this._domElement.addEventListener('mouseout', onMouseOut);
+      this._domElement.addEventListener(touchMoveEvent, onTouchMove);
+      this._domElement.addEventListener(touchEndEvent, onTouchEnd);
+    }
 
     this._enabled = true;
   };

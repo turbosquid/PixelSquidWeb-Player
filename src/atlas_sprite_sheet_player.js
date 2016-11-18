@@ -56,8 +56,8 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._useImageSmoothing    = configFetch('useImageSmoothing', false);
   this._$                    = configuration.jquery;
   this._applyStyles          = configFetch('applyStyles', false);
-  this._atlasControlAdapter = new AtlasControlAdapter();
-  this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter);
+  this._atlasControlAdapter = new AtlasControlAdapter(configuration.jquery);
+  this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter, configuration.jquery);
   this._canvas = null;
   this._context = null;
   this._div = null;
@@ -110,7 +110,16 @@ AtlasSpriteSheetPlayer.prototype.triggerEvent = function(elem, event, data) {
   else {
     var element = document.querySelectorAll(elem);
     if (element && element.length) {
-      element[0].dispatchEvent(new CustomEvent(event, { 'detail': data }));
+      if (typeof CustomEvent === 'undefined') {
+        console.log('IE11 fallback');
+        var eventObject = document.createEvent('Event');
+        eventObject.initEvent(event, true, true);
+        eventObject.detail = data;
+        element[0].dispatchEvent(eventObject);
+      }
+      else {
+        element[0].dispatchEvent(new CustomEvent(event, { 'detail': data }));
+      }
     }
   }
 };
