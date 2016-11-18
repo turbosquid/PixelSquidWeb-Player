@@ -56,13 +56,16 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._useImageSmoothing    = configFetch('useImageSmoothing', false);
   this._$                    = configuration.jquery;
   this._applyStyles          = configFetch('applyStyles', false);
-  this._atlasControlAdapter = new AtlasControlAdapter(configuration.jquery);
-  this._atlasControls = new AtlasSpriteSheetControls(this._elemParent, this._elemControlArea, this._atlasControlAdapter, configuration.jquery);
-  this._canvas = null;
-  this._context = null;
-  this._div = null;
-  this._url = null;
-  this._imageResolution = 0;
+  this._atlasControlAdapter  = new AtlasControlAdapter(configuration.jquery);
+  this._atlasControls        = new AtlasSpriteSheetControls(this._elemParent,
+                                                            this._elemControlArea,
+                                                            this._atlasControlAdapter,
+                                                            configuration.jquery);
+  this._canvas           = null;
+  this._context          = null;
+  this._div              = null;
+  this._url              = null;
+  this._imageResolution  = 0;
   this._canvasResolution = 0;
 
   var that = this;
@@ -84,14 +87,14 @@ AtlasSpriteSheetPlayer.prototype._onControlAreaChange = function(evt, data) {
 
   if (typeof evt.originalEvent !== 'undefined') {
     horizontal = evt.originalEvent.horizontal;
-    vertical = evt.originalEvent.vertical;
+    vertical   = evt.originalEvent.vertical;
   }
   if (typeof data !== 'undefined') {
     horizontal = data.horizontal;
-    vertical = data.vertical;
+    vertical   = data.vertical;
   }
   horizontal = horizontal || evt.horizontal || 0;
-  vertical = vertical || evt.vertical || 0;
+  vertical   = vertical || evt.vertical || 0;
 
   this.rotate(horizontal, vertical);
 };
@@ -146,7 +149,7 @@ AtlasSpriteSheetPlayer.prototype.resizeElement = function(elem, attrSize, styleS
     element.setAttribute('height', attrSize);
 
     if (this._applyStyles) {
-      element.style.width = [styleSize, 'px'].join('');
+      element.style.width  = [styleSize, 'px'].join('');
       element.style.height = [styleSize, 'px'].join('');
     }
   }
@@ -156,7 +159,7 @@ AtlasSpriteSheetPlayer.prototype.positionElement = function(elem, left, top) {
   var element = this._getDomElement(elem);
   if (element && this._applyStyles) {
     element.style.position = 'absolute';
-    element.style.top = [top, 'px'].join('');
+    element.style.top  = [top, 'px'].join('');
     element.style.left = [left, 'px'].join('');
   }
 };
@@ -177,7 +180,8 @@ AtlasSpriteSheetPlayer.prototype.show = function(elem) {
 
 AtlasSpriteSheetPlayer.prototype.append = function(parent, child) {
   var parentElement = this._getDomElement(parent);
-  var childElement = this._getDomElement(child);
+  var childElement  = this._getDomElement(child);
+
   if (parentElement && childElement) {
     parentElement.appendChild(childElement);
   }
@@ -216,12 +220,14 @@ AtlasSpriteSheetPlayer.prototype.rotate = function (horizontal, vertical) {
   if (!this._currentImage) {
     return;
   }
-  var latitude = this._currentImage.substring(0, 1);
-  var longitude = this._currentImage.substring(1);
-  var latitudeIndex = this._validLatitudes.indexOf(latitude);
+  var latitude       = this._currentImage.substring(0, 1);
+  var longitude      = this._currentImage.substring(1);
+  var latitudeIndex  = this._validLatitudes.indexOf(latitude);
   var longitudeIndex = this._validLongitudes.indexOf(longitude);
-  latitudeIndex += vertical;
+
+  latitudeIndex  += vertical;
   longitudeIndex += horizontal % this._atlasSphere._longitudes;
+
   if (latitudeIndex < 0) {
     latitudeIndex = 0;
   } else if (latitudeIndex >= this._atlasSphere._latitudes) {
@@ -244,20 +250,22 @@ AtlasSpriteSheetPlayer.prototype.setNextImageIndex = function (imageIndex) {
 
 AtlasSpriteSheetPlayer.prototype.createCanvas = function () {
   try {
-    this._canvas = document.createElement('canvas');
+    this._canvas  = document.createElement('canvas');
     this._context = this._canvas.getContext('2d');
+
     if (!this._canvas || !this._context) {
       throw 'CANVAS IS NOT SUPPORTED';
     }
   } catch (e) {
-    this._canvas = null;
+    this._canvas  = null;
     this._context = null;
     return false;
   }
-  var devicePixelRatio = window.devicePixelRatio || 1;
-  var backingStoreRatio = this._context.webkitBackingStorePixelRatio || this._context.mozBackingStorePixelRatio || this._context.msBackingStorePixelRatio || this._context.oBackingStorePixelRatio || this._context.backingStorePixelRatio || 1;
-  var ratio = devicePixelRatio / backingStoreRatio;
+  var devicePixelRatio   = window.devicePixelRatio || 1;
+  var backingStoreRatio  = this._context.webkitBackingStorePixelRatio || this._context.mozBackingStorePixelRatio || this._context.msBackingStorePixelRatio || this._context.oBackingStorePixelRatio || this._context.backingStorePixelRatio || 1;
+  var ratio              = devicePixelRatio / backingStoreRatio;
   this._canvasResolution = ratio * this._windowSize;
+
   this.resizeElement(this._canvas, this._canvasResolution, this._windowSize);
   this.positionElement(this._canvas, 0, 0);
   this.hide(this._canvas);
@@ -275,16 +283,17 @@ AtlasSpriteSheetPlayer.prototype.createDiv = function () {
 };
 
 AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
-  this._assetId = null;
-  this._asset = null;
-  this._initialImage = null;
-  this._currentImage = null;
-  this._validLatitudes = null;
+  this._assetId         = null;
+  this._asset           = null;
+  this._initialImage    = null;
+  this._currentImage    = null;
+  this._validLatitudes  = null;
   this._validLongitudes = null;
   this._imageResolution = null;
-  this._url = null;
-  this._atlasSphere = new AtlasSphere();
-  this._atlasImage = new AtlasImageWithProgress();
+  this._url             = null;
+  this._atlasSphere     = new AtlasSphere();
+  this._atlasImage      = new AtlasImageWithProgress();
+
   if (typeof console !== 'undefined') {
     console.log('v' + this.VERSION);
   }
@@ -294,13 +303,15 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   if (!params.asset['sprites_600'] && !params.asset['sprites_300']) {
     throw 'ASSET NOT A SPRITE SHEET ASSET';
   }
-  this._assetId = params.assetId;
-  this._asset = params.asset;
-  this._initialImage = params.initialImage || params.asset.initial_image || 'H01';
-  this._currentImage = this._initialImage;
-  this._validLatitudes = this._asset.validLatitudes || this.VALID_LATITUDES;
+
+  this._assetId         = params.assetId;
+  this._asset           = params.asset;
+  this._initialImage    = params.initialImage || params.asset.initial_image || 'H01';
+  this._currentImage    = this._initialImage;
+  this._validLatitudes  = this._asset.validLatitudes || this.VALID_LATITUDES;
   this._validLongitudes = this._asset.validLongitudes || this.VALID_LONGITUDES;
   this.adjustValidLatitudes(this._asset.extensions.atlas.camera_type_code || this._asset.atlas.camera_type_code);
+
   var preferredKey = 'sprites_' + this._preferredImageSize;
   if (this._asset[preferredKey]) {
     this._imageResolution = this._preferredImageSize;
@@ -354,14 +365,15 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
 
 AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground) {
   this._currentImage = image || this._currentImage;
-  var cell = this._atlasSphere.getSphereCellForIndex(this._currentImage);
+  var cell           = this._atlasSphere.getSphereCellForIndex(this._currentImage);
+
   if (this._canvas && this._context && !forceBackground && !this._forceBackground) {
     if (this._useImageSmoothing) {
-      this._context.imageSmoothingEnabled = true;
+      this._context.imageSmoothingEnabled    = true;
       this._context.mozImageSmoothingEnabled = true;
     }
     else {
-      this._context.imageSmoothingEnabled = false;
+      this._context.imageSmoothingEnabled    = false;
       this._context.mozImageSmoothingEnabled = false;
     }
 
@@ -391,15 +403,14 @@ AtlasSpriteSheetPlayer.prototype.isCanvasRender = function () {
 };
 
 AtlasSpriteSheetPlayer.prototype.resizeWindow = function (windowSize) {
-  this._windowSize = windowSize;
-  this._backgroundScale = this._windowSize / this._imageResolution;
+  this._windowSize       = windowSize;
+  this._backgroundScale  = this._windowSize / this._imageResolution;
 
-  var devicePixelRatio = window.devicePixelRatio || 1;
-  var backingStoreRatio = this._context.webkitBackingStorePixelRatio || this._context.mozBackingStorePixelRatio || this._context.msBackingStorePixelRatio || this._context.oBackingStorePixelRatio || this._context.backingStorePixelRatio || 1;
-  var ratio = devicePixelRatio / backingStoreRatio;
+  var devicePixelRatio   = window.devicePixelRatio || 1;
+  var backingStoreRatio  = this._context.webkitBackingStorePixelRatio || this._context.mozBackingStorePixelRatio || this._context.msBackingStorePixelRatio || this._context.oBackingStorePixelRatio || this._context.backingStorePixelRatio || 1;
+  var ratio              = devicePixelRatio / backingStoreRatio;
   this._canvasResolution = ratio * this._windowSize;
 
-  var d = null;
   if (this.isCanvasRender()) {
     this.resizeElement(this._canvas, this._canvasResolution, this._windowSize);
   }
