@@ -1,10 +1,11 @@
 {
   "name": "atlas2",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --hot --host 0.0.0.0"
   },
+  "main": "./dist/pixelsquid-atlas.js",
   "license": "",
   "description": "PixelSquid Atlas Player",
   "repository": "https://github.com/turbosquid/PixelSquidWeb-Player",

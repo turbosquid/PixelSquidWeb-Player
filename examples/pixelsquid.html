@@ -223,7 +223,7 @@
           preferredImageSize = 300;
         }
 
-        window.player = new PixelSquid.AtlasSpriteSheetPlayer({ windowSize: playerSize, preferredImageSize: preferredImageSize });
+        window.player = new PixelSquid.AtlasSpriteSheetPlayer({ windowSize: playerSize, preferredImageSize: preferredImageSize, jquery: $, applyStyles: true });
         window.player.load({ initialImage: initialImage, asset: asset });
       });
     }
