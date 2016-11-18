@@ -52,7 +52,7 @@
     window.player = null;
 
     ///***
-    ///Loading Progress
+    ///Loading Progress with jQuery
     ///***
     $(document).on('atlas-load-start', '.atlas-events', function() {
       $('.progress').show();
@@ -70,6 +70,54 @@
       $('.atlas-signature-image').hide();
       $('.atlas-viewer').show();
     });
+
+    $(document).on('atlas-image-changed', '.atlas-events', function(element, data) {
+      //console.log(data);
+    });
+
+    $(document).on('atlas-load-error', '.atlas-events', function(element, error) {
+      console.log(error);
+    });
+
+    ///***
+    ///Loading Progress without jQuery
+    ///***
+    var element = document.querySelectorAll('.atlas-events');
+    if (element && element.length) {
+      element[0].addEventListener('atlas-load-start', function() {
+        var progress = document.querySelectorAll('.progress');
+        var download = document.querySelectorAll('.download');
+
+        progress && progress.length, progress[0].innerHTML = 'Loading Progress: 0%';
+        progress && progress.length, progress[0].style.display = 'block';
+        download && download.length, download[0].style.display = 'none';
+      });
+
+      element[0].addEventListener('atlas-load-progress', function(e) {
+        var progress = document.querySelectorAll('.progress');
+        progress && progress.length, progress[0].innerHTML = 'Loading Progress: ' + (e.detail.progress * 100.0) + '%';
+      });
+
+      element[0].addEventListener('atlas-load-complete', function(e) {
+        var progress = document.querySelectorAll('.progress');
+        var download = document.querySelectorAll('.download');
+        var signatureImage = document.querySelectorAll('.atlas-signature-image');
+        var viewer = document.querySelectorAll('.atlas-viewer');
+
+        progress && progress.length,             progress[0].style.display       = 'none';
+        signatureImage && signatureImage.length, signatureImage[0].style.display = 'none';
+        download && download.length,             download[0].style.display       = 'block';
+        viewer && viewer.length,                 viewer[0].style.display         = 'block';
+      });
+
+      element[0].addEventListener('atlas-image-changed', function(e) {
+        //console.log(e.detail);
+      });
+
+      element[0].addEventListener('atlas-load-error', function(e) {
+        console.log(e.detail);
+      });
+    }
 
     ///***
     ///Download Hi-Res Image
@@ -132,7 +180,7 @@
           preferredImageSize = 300;
         }
 
-        window.player = new PixelSquid.AtlasSpriteSheetPlayer({ preferredImageSize: preferredImageSize });
+        window.player = new PixelSquid.AtlasSpriteSheetPlayer({ preferredImageSize: preferredImageSize, jquery: $, applyStyles: true });
         window.player.load({ asset: asset });
       });
     });
