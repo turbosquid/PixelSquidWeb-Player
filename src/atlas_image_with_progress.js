@@ -3,9 +3,12 @@
 var AtlasImageWithProgress = function () {
   this.percentComplete = 0.0;
   this.image = new Image();
+  this.cancelled = false;
 }
 
 AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowser) {
+  this.cancelled = false;
+
   var xml = new XMLHttpRequest();
   if (('onprogress' in xml) && (!forceOlderBrowser)) {
     this.percentComplete = 0.0;
@@ -31,6 +34,14 @@ AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowse
     };
 
     xml.onprogress = function(e) {
+      if (that.cancelled) {
+        try {
+          xml.abort();
+        }
+        catch(e) {
+        }
+      }
+
       if (e.lengthComputable) {
         that.percentComplete = (e.loaded / e.total) * 100.0;
       }
@@ -58,6 +69,10 @@ AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowse
     };
     this.image.src = url;
   }
+};
+
+AtlasImageWithProgress.prototype.cancel = function() {
+  this.cancelled = true;
 };
 
 exports.AtlasImageWithProgress = AtlasImageWithProgress;

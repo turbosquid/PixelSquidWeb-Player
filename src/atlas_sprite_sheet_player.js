@@ -114,7 +114,6 @@ AtlasSpriteSheetPlayer.prototype.triggerEvent = function(elem, event, data) {
     var element = document.querySelectorAll(elem);
     if (element && element.length) {
       if (typeof CustomEvent === 'undefined') {
-        console.log('IE11 fallback');
         var eventObject = document.createEvent('Event');
         eventObject.initEvent(event, true, true);
         eventObject.detail = data;
@@ -274,7 +273,6 @@ AtlasSpriteSheetPlayer.prototype.createCanvas = function () {
 };
 
 AtlasSpriteSheetPlayer.prototype.createDiv = function () {
-  console.log('creating div');
   this._div = document.createElement('div');
   this.resizeElement(this._div, this._windowSize, this._windowSize);
   this.positionElement(this._div, 0, 0);
@@ -361,6 +359,12 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
       that.triggerEvent(that._elemEvents, 'atlas-load-complete', { image: image });
     }
   });
+};
+
+AtlasSpriteSheetPlayer.prototype.cancelLoading = function() {
+  if (this._atlasImage) {
+    this._atlasImage.cancel();
+  }
 };
 
 AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground) {
