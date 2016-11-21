@@ -9,6 +9,13 @@
       position: relative;
     }
 
+    .cancel {
+      font-size: 16px;
+      background-color: #da4b3a;
+      color: white;
+      margin-bottom: 5px;
+    }
+
     .download {
       font-size: 16px;
       background-color: #da4b3a;
@@ -33,6 +40,7 @@
 </head>
 <body>
 
+  <button type='button' class='cancel'>Cancel</button>
   <div class='progress'>Loading Progress: 0%</div>
   <button type='button' class='download'>Download</button>
 
@@ -85,10 +93,12 @@
     var element = document.querySelectorAll('.atlas-events');
     if (element && element.length) {
       element[0].addEventListener('atlas-load-start', function() {
+        var cancel   = document.querySelectorAll('.cancel');
         var progress = document.querySelectorAll('.progress');
         var download = document.querySelectorAll('.download');
 
-        progress && progress.length, progress[0].innerHTML = 'Loading Progress: 0%';
+        cancel   && cancel.length,   cancel[0].style.display   = 'block';
+        progress && progress.length, progress[0].innerHTML     = 'Loading Progress: 0%';
         progress && progress.length, progress[0].style.display = 'block';
         download && download.length, download[0].style.display = 'none';
       });
@@ -99,11 +109,13 @@
       });
 
       element[0].addEventListener('atlas-load-complete', function(e) {
+        var cancel   = document.querySelectorAll('.cancel');
         var progress = document.querySelectorAll('.progress');
         var download = document.querySelectorAll('.download');
         var signatureImage = document.querySelectorAll('.atlas-signature-image');
         var viewer = document.querySelectorAll('.atlas-viewer');
 
+        cancel && cancel.length,                 cancel[0].style.display         = 'none';
         progress && progress.length,             progress[0].style.display       = 'none';
         signatureImage && signatureImage.length, signatureImage[0].style.display = 'none';
         download && download.length,             download[0].style.display       = 'block';
@@ -118,6 +130,10 @@
         console.log(e.detail);
       });
     }
+
+    $(document).on('click', '.cancel', function() {
+      window.player.cancelLoading();
+    });
 
     ///***
     ///Download Hi-Res Image
