@@ -217,7 +217,8 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
   function onTouchStart(evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    var e = evt.originalEvent;
+    var e = (evt.originalEvent || evt);
+    
     if (!e.changedTouches && e.touches) {
       e.changedTouches = e.touches;
     }
@@ -250,7 +251,8 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
     }
     evt.preventDefault();
     evt.stopPropagation();
-    var e = evt.originalEvent;
+    var e = (evt.originalEvent || evt);
+
     if (!e.changedTouches && e.touches) {
       e.changedTouches = e.touches;
     }
@@ -276,7 +278,7 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
   function onTouchEnd(evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    var e = evt.originalEvent;
+    var e = (evt.originalEvent || evt);
 
     if (!e.changedTouches && e.touches) {
       e.changedTouches = e.touches;

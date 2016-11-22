@@ -1019,7 +1019,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function onTouchStart(evt) {
 	    evt.preventDefault();
 	    evt.stopPropagation();
-	    var e = evt.originalEvent;
+	    var e = evt.originalEvent || evt;
+
 	    if (!e.changedTouches && e.touches) {
 	      e.changedTouches = e.touches;
 	    }
@@ -1052,7 +1053,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    evt.preventDefault();
 	    evt.stopPropagation();
-	    var e = evt.originalEvent;
+	    var e = evt.originalEvent || evt;
+
 	    if (!e.changedTouches && e.touches) {
 	      e.changedTouches = e.touches;
 	    }
@@ -1078,7 +1080,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function onTouchEnd(evt) {
 	    evt.preventDefault();
 	    evt.stopPropagation();
-	    var e = evt.originalEvent;
+	    var e = evt.originalEvent || evt;
 
 	    if (!e.changedTouches && e.touches) {
 	      e.changedTouches = e.touches;
