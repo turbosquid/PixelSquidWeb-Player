@@ -79,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var AtlasImageWithProgress = __webpack_require__(6).AtlasImageWithProgress;
 
 	function AtlasSpriteSheetPlayer(configuration) {
-	  this.VERSION = '2.4.0';
+	  this.VERSION = '2.4.1';
 	  this.VALID_LATITUDES = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
 	  this.VALID_LONGITUDES = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16'];
 
@@ -1019,7 +1019,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function onTouchStart(evt) {
 	    evt.preventDefault();
 	    evt.stopPropagation();
-	    var e = evt.originalEvent;
+	    var e = evt.originalEvent || evt;
+
 	    if (!e.changedTouches && e.touches) {
 	      e.changedTouches = e.touches;
 	    }
@@ -1052,7 +1053,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    evt.preventDefault();
 	    evt.stopPropagation();
-	    var e = evt.originalEvent;
+	    var e = evt.originalEvent || evt;
+
 	    if (!e.changedTouches && e.touches) {
 	      e.changedTouches = e.touches;
 	    }
@@ -1078,7 +1080,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function onTouchEnd(evt) {
 	    evt.preventDefault();
 	    evt.stopPropagation();
-	    var e = evt.originalEvent;
+	    var e = evt.originalEvent || evt;
 
 	    if (!e.changedTouches && e.touches) {
 	      e.changedTouches = e.touches;

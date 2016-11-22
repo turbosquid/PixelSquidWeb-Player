@@ -1,0 +1,146 @@
+<!doctype HTML>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>PixelSquid Atlas - Basic Loading</title>
+  <script src='../src/externals/jquery-1.12.3.min.js'></script>
+  <style>
+    .atlas-container {
+      position: relative;
+    }
+
+    .cancel {
+      font-size: 16px;
+      background-color: #da4b3a;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    #download_iframe {
+      display: none;
+    }
+
+    .atlas-viewer {
+      display: none;
+    }
+
+    .atlas-signature-image {
+      width: 600px;
+      height: 600px;
+    }
+  </style>
+</head>
+<body>
+
+  <button type='button' class='cancel'>Cancel</button>
+  <div class='progress'>Loading Progress: 0%</div>
+
+  <div class='atlas-container'>
+    <div class='atlas-events'>
+      <div class='atlas-control-area atlas-viewer'>
+      </div>
+      <div class='atlas-signature-image'>
+        <img id='atlas_signature_image' src=''/>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var product = {"data":{"id":"924832797581907663","type":"product","attributes":{"name":"Deinonychus","tags":["carnivorous","dromaeosaurid","coelurosaurian","cretaceous","reptile","lizard","claw","talon","extinct","monster","creature","predator","velociraptor","nature","animal","dinosaur","theropod","raptor","deinonychus"],"signature_image_url":"https://atlas-content1-cdn.pixelsquid.com/assets/924832797581907663/jpeg-600/Deinonychus.5.600.jpg","signature_image_low_res_url":"https://atlas-content1-cdn.pixelsquid.com/assets/924832797581907663/jpeg-600/Deinonychus.5.600.jpg","search_preview_url":"https://atlas-content1-cdn.pixelsquid.com/assets/924832797581907663/jpeg-600/H03.jpg","search_preview_low_res_url":"https://atlas-content1-cdn.pixelsquid.com/assets/924832797581907663/jpeg-600/H03.jpg","created_at":"2015-02-20T21:44:42Z","updated_at":"2016-10-16T17:53:10Z"},"relationships":{"owner":{"data":{"id":"833253844698797109","type":"owner"}},"spinner":{"data":{"id":"924832797581907663","type":"spinner"}}},"links":{"self":"http://api.pixelsquid.com/api/products/924832797581907663","spinner":"http://api.pixelsquid.com/api/products/924832797581907663/spinners/924832797581907663"}},"included":[{"id":"924832797581907663","type":"spinner","attributes":{"resolutions":["2k","600","100","300"],"formats":["png-shadow","png-shadowless","png","jpeg","psd","png-watermarked","png-shadowless-watermarked"],"camera_type_code":null,"latitudes":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"],"longitudes":["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16"],"sprites_300_url":"https://atlas-content1-cdn.pixelsquid.com/assets/924832797581907663/jpeg-300/atlas-300.jpg","sprites_600_url":"https://atlas-content1-cdn.pixelsquid.com/assets/924832797581907663/jpeg-600/atlas-600.jpg","videos":[{"created_at":"2016-03-07T14:19:28-06:00","feature_version":"full","format":"mp4","height":960,"id":"22ffe504-8c85-4257-762c-95e2d6ab93e2","path":"videos/video-960-10fps-28crf-1gop-slow-full.mp4","width":1920},{"created_at":"2016-03-07T14:19:28-06:00","feature_version":"full","format":"mp4.txt.gz","height":960,"id":"733c5baa-7b5c-4fc7-5185-82c254457481","path":"videos/video-960-10fps-28crf-1gop-slow-full.mp4.txt.gz","width":1920},{"created_at":"2016-03-07T14:19:28-06:00","feature_version":"full","format":"webm.txt.gz","height":960,"id":"2f851311-289c-452d-65d7-0e3d2e432e54","path":"videos/video-960-10fps-4crf-1gop-slow-full.webm.txt.gz","width":1920},{"created_at":"2016-03-07T14:21:57-06:00","feature_version":"shadowless","format":"mp4","height":960,"id":"30db8c6f-5b2d-4061-44df-340219dc4e51","path":"videos/video-960-10fps-28crf-1gop-slow-shadowless.mp4","width":1920},{"created_at":"2016-03-07T14:21:57-06:00","feature_version":"shadowless","format":"mp4.txt.gz","height":960,"id":"2986a698-3061-4c95-49ab-f32076faf1c0","path":"videos/video-960-10fps-28crf-1gop-slow-shadowless.mp4.txt.gz","width":1920},{"created_at":"2016-03-07T14:21:57-06:00","feature_version":"shadowless","format":"webm.txt.gz","height":960,"id":"22073c99-2745-4192-7268-2164f271570f","path":"videos/video-960-10fps-4crf-1gop-slow-shadowless.webm.txt.gz","width":1920}]},"links":{"self":"http://api.pixelsquid.com/api/products/924832797581907663/spinners/924832797581907663","product":"http://api.pixelsquid.com/api/products/924832797581907663"}}]};
+
+    window.player = null;
+
+    ///***
+    ///Loading Progress with jQuery
+    ///***
+    $(document).on('atlas-load-start', '.atlas-events', function() {
+      $('.progress').show();
+      $('.progress').html('Loading Progress: 0%');
+    });
+
+    $(document).on('atlas-load-progress', '.atlas-events', function(element, data) {
+      $('.progress').html('Loading Progress: ' + (data.progress * 100.0) + '%');
+    });
+
+    $(document).on('atlas-load-complete', '.atlas-events', function(element, data) {
+      $('.progress').hide();
+      $('.atlas-signature-image').hide();
+      $('.atlas-viewer').show();
+    });
+
+    $(document).on('atlas-image-changed', '.atlas-events', function(element, data) {
+      //console.log(data);
+    });
+
+    $(document).on('atlas-load-error', '.atlas-events', function(element, error) {
+      console.log(error);
+    });
+
+    ///***
+    ///Loading Progress without jQuery
+    ///***
+    var element = document.querySelectorAll('.atlas-events');
+    if (element && element.length) {
+      element[0].addEventListener('atlas-load-start', function() {
+        var cancel   = document.querySelectorAll('.cancel');
+        var progress = document.querySelectorAll('.progress');
+
+        cancel   && cancel.length,   cancel[0].style.display   = 'block';
+        progress && progress.length, progress[0].innerHTML     = 'Loading Progress: 0%';
+        progress && progress.length, progress[0].style.display = 'block';
+      });
+
+      element[0].addEventListener('atlas-load-progress', function(e) {
+        var progress = document.querySelectorAll('.progress');
+        progress && progress.length, progress[0].innerHTML = 'Loading Progress: ' + (e.detail.progress * 100.0) + '%';
+      });
+
+      element[0].addEventListener('atlas-load-complete', function(e) {
+        var cancel   = document.querySelectorAll('.cancel');
+        var progress = document.querySelectorAll('.progress');
+        var signatureImage = document.querySelectorAll('.atlas-signature-image');
+        var viewer = document.querySelectorAll('.atlas-viewer');
+
+        cancel && cancel.length,                 cancel[0].style.display         = 'none';
+        progress && progress.length,             progress[0].style.display       = 'none';
+        signatureImage && signatureImage.length, signatureImage[0].style.display = 'none';
+        viewer && viewer.length,                 viewer[0].style.display         = 'block';
+      });
+
+      element[0].addEventListener('atlas-image-changed', function(e) {
+        //console.log(e.detail);
+      });
+
+      element[0].addEventListener('atlas-load-error', function(e) {
+        console.log(e.detail);
+      });
+    }
+
+    $(document).on('click', '.cancel', function() {
+      window.player.cancelLoading();
+    });
+
+    ///***
+    ///Initialize the player and begin loading
+    ///***
+    $(function() {
+      var adapter = new PixelSquid.AtlasAPIAdapter();
+      adapter.parseResponse(product);
+
+      //show a static image while loading
+      var asset = adapter.getAsset();
+      $('#atlas_signature_image').attr('src', asset.signature_image);
+
+      var preferredImageSize = 600;
+      //use smaller resolution images for mobile
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        preferredImageSize = 300;
+      }
+
+      window.player = new PixelSquid.AtlasSpriteSheetPlayer({ preferredImageSize: preferredImageSize, jquery: $, applyStyles: true });
+      window.player.load({ asset: asset });
+    });
+  </script>
+  <script src='../dist/pixelsquid-atlas.js'></script>
+</body>
+</html>
