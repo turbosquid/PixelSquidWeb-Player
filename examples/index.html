@@ -164,7 +164,8 @@
         contentType: 'application/json; charset=utf-8',
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
-          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
+          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1',
+          'X-Client-External-User-ID': 'SAMPLEUSER'
         }
       }).done(function(data) {
         $('#download_iframe').attr('src', data.data.attributes.url);
@@ -177,10 +178,11 @@
     $(function() {
       //the replacement of the hostname is just needed for this example since it is running through a "proxy"
       $.ajax({
-        url: 'http://' + window.location.hostname + ':8081/api/products/924832797581907663?include=spinner',
+        url: 'http://' + window.location.hostname + ':8081/api/products/924832797581907663?include=spinner,product_collections',
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
-          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
+          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1',
+          'X-Client-External-User-ID': 'SAMPLEUSER'
         }
       }).done(function(data) {
         var adapter = new PixelSquid.AtlasAPIAdapter();

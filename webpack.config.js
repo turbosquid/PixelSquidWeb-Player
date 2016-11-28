@@ -69,15 +69,20 @@ if (TARGET === 'start') {
 
   const crossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Authorization,Accept,Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Authorization,Accept,Content-Type,X-Client-External-User-ID');
     next();
   };
   app.use(crossDomain);
 
   app.get('/api/products/:productId', function(req, res) {
     var query = url.parse(req.url, true);
+
     request({
-      headers: { accept: req.headers.accept, authorization: req.headers.authorization },
+      headers: {
+        accept: req.headers.accept,
+        authorization: req.headers.authorization,
+        'x-client-external-user-id': req.headers['x-client-external-user-id']
+      },
       uri: `http://api.pixelsquid.com/api/products/${req.params.productId}${query.search}`
     }, function(apiErr, apiRes, apiBody) {
       res.contentType('application/json');
@@ -88,7 +93,11 @@ if (TARGET === 'start') {
   app.get('/api/products', function(req, res) {
     var query = url.parse(req.url, true);
     request({
-      headers: { accept: req.headers.accept, authorization: req.headers.authorization },
+      headers: {
+        accept: req.headers.accept,
+        authorization: req.headers.authorization,
+        'x-client-external-user-id': req.headers['x-client-external-user-id']
+      },
       uri: `http://api.pixelsquid.com/api/products${query.search}`
     }, function(apiErr, apiRes, apiBody) {
       res.contentType('application/json');
@@ -100,7 +109,11 @@ if (TARGET === 'start') {
     var data = req.body;
 
     request.post({
-      headers: { accept: req.headers.accept, authorization: req.headers.authorization },
+      headers: {
+        accept: req.headers.accept,
+        authorization: req.headers.authorization,
+        'x-client-external-user-id': req.headers['x-client-external-user-id']
+      },
       uri: `https://api.pixelsquid.com/api/products/${req.params.productId}/download_links`,
       json: req.body
     }, function(apiErr, apiRes, apiBody) {
