@@ -11,7 +11,7 @@
 (the markup can be overriden in the sprite sheet constructor)
 
 2.  Add the source from [dist/pixelsquid-atlas.js](./dist/pixelsquid-atlas.js) to your project.
-3.  Create an instance of `PixelSquid.AtlasAPIAdapter` and pass in the response from the [PixelSquid API - GET /products/productId](https://api.pixelsquid.com/apidoc/1.0/products/show.html)
+3.  Create an instance of `PixelSquid.AtlasAPIAdapter` and pass in the response from the [PixelSquid API - GET /products/productId](http://pixelsquid-api-docs-prod.s3-website-us-east-1.amazonaws.com/apidoc.html)
 4.  (optional) Show a static loading image using the `signature_image` property of the asset from the api adapter.
 5.  Create an instance of `PixelSquid.AtlasSpriteSheetPlayer` and call load passing in the asset from the api adapter.
 

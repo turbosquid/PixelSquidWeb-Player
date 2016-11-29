@@ -38,10 +38,11 @@
 
     function doSearch(terms) {
       $.ajax({
-        url: `http://${window.location.hostname}:8081/api/products?filter[query]=${terms}&page[size]=100`,
+        url: `http://${window.location.hostname}:8081/api/products?filter[query]=${terms}&page[size]=100&include=product_collections`,
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
-          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1'
+          'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1',
+          'X-Client-External-User-ID': 'SAMPLEUSER'
         }
       }).done(function(data) {
         $('.atlas-results').empty();
