@@ -276,6 +276,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	AtlasSpriteSheetPlayer.prototype.createCanvas = function () {
+	  if (!this._useCanvas) {
+	    return false;
+	  }
+
 	  try {
 	    this._canvas = document.createElement('canvas');
 	    this._context = this._canvas.getContext('2d');
