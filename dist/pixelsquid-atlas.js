@@ -79,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var AtlasImageWithProgress = __webpack_require__(6).AtlasImageWithProgress;
 
 	function AtlasSpriteSheetPlayer(configuration) {
-	  this.VERSION = '2.4.1';
+	  this.VERSION = '2.4.2';
 	  this.VALID_LATITUDES = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
 	  this.VALID_LONGITUDES = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16'];
 
@@ -275,6 +275,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	AtlasSpriteSheetPlayer.prototype.createCanvas = function () {
+	  if (!this._useCanvas) {
+	    return false;
+	  }
+
 	  try {
 	    this._canvas = document.createElement('canvas');
 	    this._context = this._canvas.getContext('2d');
