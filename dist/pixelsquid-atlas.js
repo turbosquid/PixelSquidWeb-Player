@@ -107,6 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._url = null;
 	  this._imageResolution = 0;
 	  this._canvasResolution = 0;
+	  this._loadComplete = false;
 
 	  var that = this;
 	  if (this._$) {
@@ -315,6 +316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._validLatitudes = null;
 	  this._validLongitudes = null;
 	  this._imageResolution = null;
+	  this._loadComplete = false;
 	  this._url = null;
 	  this._atlasSphere = new AtlasSphere();
 	  this._atlasImage = new AtlasImageWithProgress();
@@ -372,6 +374,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      that.triggerEvent(that._elemEvents, 'atlas-load-progress', { progress: progress / 100 });
 	    }
 	    if (image && progress >= 100) {
+	      that._loadComplete = true;
 	      that.renderImage();
 
 	      if (that._canvas && that._context) {
@@ -395,6 +398,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground) {
+	  if (!this._loadComplete) {
+	    return;
+	  }
+
 	  this._currentImage = image || this._currentImage;
 	  var cell = this._atlasSphere.getSphereCellForIndex(this._currentImage);
 

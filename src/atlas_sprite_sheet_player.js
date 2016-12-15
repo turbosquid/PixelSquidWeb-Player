@@ -67,6 +67,7 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._url              = null;
   this._imageResolution  = 0;
   this._canvasResolution = 0;
+  this._loadComplete     = false;
 
   var that = this;
   if (this._$) {
@@ -288,6 +289,7 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   this._validLatitudes  = null;
   this._validLongitudes = null;
   this._imageResolution = null;
+  this._loadComplete    = false;
   this._url             = null;
   this._atlasSphere     = new AtlasSphere();
   this._atlasImage      = new AtlasImageWithProgress();
@@ -345,6 +347,7 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
       that.triggerEvent(that._elemEvents, 'atlas-load-progress', { progress: progress / 100 });
     }
     if (image && progress >= 100) {
+      that._loadComplete = true;
       that.renderImage();
 
       if (that._canvas && that._context) {
@@ -368,6 +371,10 @@ AtlasSpriteSheetPlayer.prototype.cancelLoading = function() {
 };
 
 AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground) {
+  if (!this._loadComplete) {
+    return;
+  }
+
   this._currentImage = image || this._currentImage;
   var cell           = this._atlasSphere.getSphereCellForIndex(this._currentImage);
 
