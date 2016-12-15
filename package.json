@@ -1,6 +1,6 @@
 {
   "name": "atlas2",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --hot --host 0.0.0.0"

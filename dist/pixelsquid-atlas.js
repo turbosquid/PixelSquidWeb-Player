@@ -79,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var AtlasImageWithProgress = __webpack_require__(6).AtlasImageWithProgress;
 
 	function AtlasSpriteSheetPlayer(configuration) {
-	  this.VERSION = '2.4.2';
+	  this.VERSION = '2.4.3';
 	  this.VALID_LATITUDES = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
 	  this.VALID_LONGITUDES = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16'];
 
@@ -107,6 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._url = null;
 	  this._imageResolution = 0;
 	  this._canvasResolution = 0;
+	  this._loadComplete = false;
 
 	  var that = this;
 	  if (this._$) {
@@ -319,6 +320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._validLatitudes = null;
 	  this._validLongitudes = null;
 	  this._imageResolution = null;
+	  this._loadComplete = false;
 	  this._url = null;
 	  this._atlasSphere = new AtlasSphere();
 	  this._atlasImage = new AtlasImageWithProgress();
@@ -376,6 +378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      that.triggerEvent(that._elemEvents, 'atlas-load-progress', { progress: progress / 100 });
 	    }
 	    if (image && progress >= 100) {
+	      that._loadComplete = true;
 	      that.renderImage();
 
 	      if (that._canvas && that._context) {
@@ -399,6 +402,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	AtlasSpriteSheetPlayer.prototype.renderImage = function (image, forceBackground) {
+	  if (!this._loadComplete) {
+	    return;
+	  }
+
 	  this._currentImage = image || this._currentImage;
 	  var cell = this._atlasSphere.getSphereCellForIndex(this._currentImage);
 
