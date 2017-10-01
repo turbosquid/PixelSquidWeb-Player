@@ -8,7 +8,7 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
   this._domSelector = domSelector;
 
   if (this._$) {
-    this._domElement = $(this._domSelector)[0];
+    this._domElement = this._$(this._domSelector)[0];
   }
   else {
     this._domElement = document.querySelectorAll(this._domSelector)[0];
@@ -59,17 +59,17 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
     this._windowHalfY = this._domElement.clientHeight / 2;
 
     if (this._$) {
-      $(this._parentSelector).on('contextmenu.player', this._domSelector, function (e) {
+      this._$(this._parentSelector).on('contextmenu.player', this._domSelector, function (e) {
         e.preventDefault();
       });
 
-      $(this._parentSelector).on(touchStartEvent + '.player', this._domSelector, onTouchStart);
-      $(this._parentSelector).on('mousedown.player', this._domSelector, onMouseDown);
-      $(this._parentSelector).on('mouseup.player', this._domSelector, onMouseUp);
-      $(this._parentSelector).on('mousemove.player', this._domSelector, onMouseMove);
-      $(this._parentSelector).on('mouseout.player', this._domSelector, onMouseOut);
-      $(this._parentSelector).on(touchMoveEvent + '.player', this._domSelector, onTouchMove);
-      $(this._parentSelector).on(touchEndEvent + '.player', this._domSelector, onTouchEnd);
+      this._$(this._parentSelector).on(touchStartEvent + '.player', this._domSelector, onTouchStart);
+      this._$(this._parentSelector).on('mousedown.player', this._domSelector, onMouseDown);
+      this._$(this._parentSelector).on('mouseup.player', this._domSelector, onMouseUp);
+      this._$(this._parentSelector).on('mousemove.player', this._domSelector, onMouseMove);
+      this._$(this._parentSelector).on('mouseout.player', this._domSelector, onMouseOut);
+      this._$(this._parentSelector).on(touchMoveEvent + '.player', this._domSelector, onTouchMove);
+      this._$(this._parentSelector).on(touchEndEvent + '.player', this._domSelector, onTouchEnd);
     }
     else {
       this._domElement.addEventListener('contextmenu', function(evt) {
