@@ -1262,20 +1262,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._asset.productId = response.data.id;
 	  this._asset.name = response.data.attributes.name;
 
-	  var jpeg600 = findSpinnerAssetFile(response, "jpeg", "600");
+	  var jpeg600 = this.findSpinnerAssetFile(response, "jpeg", "600");
 	  if (!jpeg600) {
 	    return false;
 	  }
 	  this._asset.signature_image = "//" + jpeg600.s3_bucket + jpeg600.s3_path + "/H01." + jpeg600.extension;
 	  this._asset.sprites_600 = "//" + jpeg600.s3_bucket + jpeg600.s3_path + "/asset-600." + jpeg600.extension;
 
-	  var jpeg300 = findSpinnerAssetFile(response, "jpeg", "300");
+	  var jpeg300 = this.findSpinnerAssetFile(response, "jpeg", "300");
 	  if (!jpeg300) {
 	    return false;
 	  }
 	  this._asset.sprites_300 = "//" + jpeg300.s3_bucket + jpeg300.s3_path + "/asset-300." + jpeg300.extension;
 
-	  var spinner = findSpinner(response);
+	  var spinner = this.findSpinner(response);
 	  if (!spinner) {
 	    return false;
 	  }
