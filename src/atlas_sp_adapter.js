@@ -33,7 +33,7 @@ AtlasSPAdapter.prototype.getAsset = function() {
   return this._asset;
 }
 
-AtlasSPAdapter.prototype.findSpinnerAssetFile(response, format, resolution) {
+AtlasSPAdapter.prototype.findSpinnerAssetFile = function(response, format, resolution) {
   var spinnerFile = _.find(response.included, function(o) {
     return (o.type === "spinner_files" && o.format === format && o.resolution === resolution)
   });
@@ -49,7 +49,7 @@ AtlasSPAdapter.prototype.findSpinnerAssetFile(response, format, resolution) {
   return assetFile;
 }
 
-AtlasSPAdapter.prototype.findSpinner(response) {
+AtlasSPAdapter.prototype.findSpinner = function(response) {
   var spinner = _.find(response.included, function(o) {
     return (o.type == "spinners");
   });
