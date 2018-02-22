@@ -65,6 +65,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.AtlasSpriteSheetPlayer = AtlasSpriteSheetPlayer;
 	exports.AtlasAPIAdapter = AtlasAPIAdapter;
+	exports.AtlasSPAdapter = AtlasSPAdapter;
 
 /***/ },
 /* 1 */
