@@ -24,6 +24,8 @@ AtlasAPIAdapter.prototype.parseResponse = function(response) {
   this._asset.sprites_600 = attributes.sprites_600_url;
   this._asset.extensions = { atlas: { camera_type_code: attributes.camera_type_code } };
   this._asset.atlas = { camera_type_code: attributes.camera_type_code };
+
+  return true;
 }
 
 AtlasAPIAdapter.prototype.getAsset = function() {
