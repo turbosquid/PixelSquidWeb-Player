@@ -30,7 +30,12 @@ AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowse
         if (callback) {
           callback(null, 100.0, that.image);
         }
-      }
+      };
+      that.image.onerror = function () {
+        if (callback) {
+          callback('error loading atlas image', null, null);
+        }
+      };
     };
 
     xml.onprogress = function(e) {
