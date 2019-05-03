@@ -19,8 +19,8 @@ A sample spinner integration can bee seen in [examples/index.html](./examples/in
 
 ## Developing or Running Examples Locally
 1.  Make sure you are runing nodejs version v5.8.0 or later and npm version 3.7.3 or later
-2.  Clone this repository into a new directory, and install dependencies with `npm install`.
-3.  Use `npm start` to start up a local development server.
+2.  Clone this repository into a new directory, and install dependencies with `yarn install`.
+3.  Use `yarn start` to start up a local development server.
 
 * [http://localhost:8080/examples/index.html](http://localhost:8080/examples/index.html) uses the [PixelSquid API](https://api.pixelsquid.com/apidoc/1.0) to display a spinner and download the high resolution transparent PNG of the currently selected angle.
 * [http://localhost:8080/examples/search.html](http://localhost:8080/examples/search.html) uses the [PixelSquid API](https://api.pixelsquid.com/apidoc/1.0) to show an example of search results
