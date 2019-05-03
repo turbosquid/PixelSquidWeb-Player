@@ -19,12 +19,12 @@ const common = {
     filename: 'pixelsquid-atlas.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015']
+          presets: ['@babel/preset-env']
         }
       },
       {
@@ -46,7 +46,7 @@ const common = {
     'jquery': 'jQuery'
   },
   resolve: {
-    extensions: ['', '.js'],
+    extensions: ['.js'],
     alias: {
       jquery: 'src/externals/jquery-1.12.3.min'
     }
