@@ -68,6 +68,7 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._imageResolution  = 0;
   this._canvasResolution = 0;
   this._loadComplete     = false;
+  this._cssBackgroundSet = false
 
   var that = this;
   if (this._$) {
@@ -114,14 +115,22 @@ AtlasSpriteSheetPlayer.prototype.triggerEvent = function(elem, event, data) {
   else {
     var element = document.querySelectorAll(elem);
     if (element && element.length) {
-      if (typeof CustomEvent === 'undefined') {
+      if (typeof CustomEvent !== 'undefined') {
+        element[0].dispatchEvent(new CustomEvent(event, { 'detail': data }));
+      }
+
+      if (typeof document.createEvent !== 'undefined') {
         var eventObject = document.createEvent('Event');
         eventObject.initEvent(event, true, true);
         eventObject.detail = data;
         element[0].dispatchEvent(eventObject);
       }
-      else {
-        element[0].dispatchEvent(new CustomEvent(event, { 'detail': data }));
+
+      // photoshop
+      if (typeof Event !== 'undefined') {
+        var eventObject = new Event(event)
+        eventObject.detail = data
+        element[0].dispatchEvent(eventObject)
       }
     }
   }
@@ -187,6 +196,8 @@ AtlasSpriteSheetPlayer.prototype.append = function(parent, child) {
   }
 };
 
+let wasLoaded = false
+
 AtlasSpriteSheetPlayer.prototype.renderCssCell = function(cell) {
   var element = this._getDomElement(this._div);
   if (element) {
@@ -195,7 +206,11 @@ AtlasSpriteSheetPlayer.prototype.renderCssCell = function(cell) {
       element.style.height = this._windowSize;
     }
 
-    element.style['background-image']    = ['url("', this._url, '")'].join('');
+    if (!this._cssBackgroundSet) {
+      element.style['background-image']    = ['url("', this._url, '")'].join('');
+      this._cssBackgroundSet = true
+    }
+
     element.style['background-position'] = ['-', cell.left * this._backgroundScale, 'px -', cell.top * this._backgroundScale, 'px'].join('');
     element.style['background-size']     = [16 * this._imageResolution * this._backgroundScale, 'px ', this._validLatitudes.length * this._imageResolution * this._backgroundScale, 'px'].join('');
   }
@@ -286,17 +301,17 @@ AtlasSpriteSheetPlayer.prototype.createDiv = function () {
 };
 
 AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
-  this._assetId         = null;
-  this._asset           = null;
-  this._initialImage    = null;
-  this._currentImage    = null;
-  this._validLatitudes  = null;
-  this._validLongitudes = null;
-  this._imageResolution = null;
-  this._loadComplete    = false;
-  this._url             = null;
-  this._atlasSphere     = new AtlasSphere();
-  this._atlasImage      = new AtlasImageWithProgress();
+  this._assetId          = null;
+  this._asset            = null;
+  this._initialImage     = null;
+  this._currentImage     = null;
+  this._validLatitudes   = null;
+  this._validLongitudes  = null;
+  this._imageResolution  = null;
+  this._loadComplete     = false;
+  this._url              = null;
+  this._cssBackgroundSet = false;
+  this._atlasSphere      = new AtlasSphere();
 
   if (typeof console !== 'undefined') {
     console.log('v' + this.VERSION);
@@ -342,6 +357,9 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   this._atlasSphere.initPartial(this._validLatitudes, this._validLongitudes, false, this._imageResolution);
   this.triggerEvent(this._elemEvents, 'atlas-load-start');
   var that = this;
+
+  const imageParent = params.attachImage ? this._elemEvents : null
+  this._atlasImage = new AtlasImageWithProgress(imageParent);
   this._atlasImage.load(this._url, function (error, progress, image) {
     if (error) {
       that.triggerEvent(that._elemEvents, 'atlas-load-error', { error: error });
