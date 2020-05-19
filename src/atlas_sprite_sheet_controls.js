@@ -2,7 +2,6 @@
 var AtlasClientCapabilities = require('./atlas_client_capabilities').AtlasClientCapabilities;
 
 var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAdapter, jquery) {
-
   this._$ = jquery;
   this._parentSelector = parentSelector;
   this._domSelector = domSelector;
@@ -137,6 +136,7 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
   function onMouseDown(e) {
     scope._windowHalfX = scope._domElement.clientWidth / 2;
     scope._windowHalfY = scope._domElement.clientHeight / 2;
+
     e.preventDefault();
     e.stopPropagation();
     if (scope._onBeforeMouseDown) {

@@ -77,11 +77,25 @@ exports.AtlasControlAdapter = function (jquery) {
         this._$(this._domElement).trigger(this._changeEvent.type, [{ horizontal: horizontal, vertical: vertical }]);
       }
       else {
-        var event = document.createEvent('Event');
-        event.initEvent(this._changeEvent.type, true, true);
-        event.horizontal = horizontal;
-        event.vertical = vertical;
-        this._domElement.dispatchEvent(event);
+        if (typeof CustomEvent !== 'undefined') {
+          this._domElement.dispatchEvent(new CustomEvent(this.changeEvent.type, { horizontal: horizontal, vertical: vertical }));
+        }
+
+        if (typeof document.createEvent !== 'undefined') {
+          var event = document.createEvent('Event');
+          event.initEvent(this._changeEvent.type, true, true);
+          event.horizontal = horizontal;
+          event.vertical = vertical;
+          this._domElement.dispatchEvent(event);
+        }
+
+        // photoshop
+        if (typeof Event !== 'undefined') {
+          var eventObject = new Event(this._changeEvent.type)
+          eventObject.horizontal = horizontal
+          eventObject.vertical = vertical
+          this._domElement.dispatchEvent(eventObject)
+        }
       }
     }
   };

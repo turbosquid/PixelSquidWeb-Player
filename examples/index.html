@@ -204,7 +204,7 @@
         }
 
         window.player = new PixelSquid.AtlasSpriteSheetPlayer({ preferredImageSize: preferredImageSize, jquery: $, applyStyles: true, useCanvas: useCanvas });
-        window.player.load({ asset: asset });
+        window.player.load({ asset: asset, attachImage: true });
       });
     });
   </script>

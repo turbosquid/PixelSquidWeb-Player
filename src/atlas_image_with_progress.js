@@ -1,8 +1,19 @@
 'use strict';
 
-var AtlasImageWithProgress = function () {
+var AtlasImageWithProgress = function (div) {
   this.percentComplete = 0.0;
   this.image = new Image();
+  this.parentElement = null
+  if (div) {
+    var element = document.querySelectorAll(div);
+    if (element && element.length) {
+      this.parentElement = element[0]
+      // this is needed for photoshop, setting display of none does not work
+      this.image.style.width = 0
+      this.image.style.height = 0
+      this.parentElement.appendChild(this.image)
+    }
+  }
   this.cancelled = false;
 }
 
@@ -19,23 +30,39 @@ AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowse
     var that = this;
 
     xml.onload = function(e) {
-      var headers = xml.getAllResponseHeaders(),
-        contentType = headers.match(/^Content-Type\:\s*(.*?)$/mi),
-        mimeType = contentType[1] || 'image/png';
+      try {
+        var headers = xml.getAllResponseHeaders(),
+          contentType = headers.match(/^Content-Type\:\s*(.*?)$/mi),
+          mimeType = contentType[1] || 'image/png';
 
-      var blob = new Blob([this.response], { type: mimeType });
-      that.image.src = window.URL.createObjectURL(blob);
-      that.image.onload = function() {
-        window.URL.revokeObjectURL(that.image.src)
-        if (callback) {
-          callback(null, 100.0, that.image);
-        }
-      };
-      that.image.onerror = function () {
-        if (callback) {
-          callback('error loading atlas image', null, null);
-        }
-      };
+        var blob = new Blob([xml.response], { type: mimeType });
+        var imgUrl = window.URL.createObjectURL(blob)
+
+        that.image.onload = function() {
+          try {
+            window.URL.revokeObjectURL(imgUrl)
+            if (that.parentElement) {
+              that.parentElement.removeChild(that.image)
+            }
+            if (callback) {
+              callback(null, 100.0, that.image);
+            }
+          }
+          catch (e) {
+            console.log(e)
+          }
+        };
+
+        that.image.onerror = function () {
+          if (callback) {
+            callback('error loading atlas image', null, null);
+          }
+        };
+
+        that.image.src = imgUrl;
+      } catch(e) {
+        console.log(e)
+      }
     };
 
     xml.onprogress = function(e) {
