@@ -75,10 +75,10 @@ exports.AtlasControlAdapter = function (jquery) {
     if (this._domElement && (Math.abs(horizontal) > 0 || Math.abs(vertical) > 0)) {
       if (this._$) {
         this._$(this._domElement).trigger(this._changeEvent.type, [{ horizontal: horizontal, vertical: vertical }]);
-      }
-      else {
+      } else {
         if (typeof CustomEvent !== 'undefined') {
-          this._domElement.dispatchEvent(new CustomEvent(this.changeEvent.type, { horizontal: horizontal, vertical: vertical }));
+          this._domElement.dispatchEvent(new CustomEvent(this._changeEvent.type, { detail: { horizontal: horizontal, vertical: vertical } }));
+          return
         }
 
         if (typeof document.createEvent !== 'undefined') {
@@ -87,6 +87,7 @@ exports.AtlasControlAdapter = function (jquery) {
           event.horizontal = horizontal;
           event.vertical = vertical;
           this._domElement.dispatchEvent(event);
+          return
         }
 
         // photoshop
@@ -95,6 +96,7 @@ exports.AtlasControlAdapter = function (jquery) {
           eventObject.horizontal = horizontal
           eventObject.vertical = vertical
           this._domElement.dispatchEvent(eventObject)
+          return
         }
       }
     }

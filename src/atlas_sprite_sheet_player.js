@@ -79,6 +79,12 @@ function AtlasSpriteSheetPlayer(configuration) {
   else {
     this.addEventListener(this._elemControlArea, 'change', function(evt) {
       var data = { horizontal: evt.horizontal, vertical: evt.vertical };
+
+      if (typeof evt.detail !== 'undefined') {
+        data.horizontal = evt.detail.horizontal
+        data.vertical = evt.detail.vertical
+      }
+
       that._onControlAreaChange(evt, data);
     }, false);
   }
@@ -91,10 +97,12 @@ AtlasSpriteSheetPlayer.prototype._onControlAreaChange = function(evt, data) {
     horizontal = evt.originalEvent.horizontal;
     vertical   = evt.originalEvent.vertical;
   }
+
   if (typeof data !== 'undefined') {
     horizontal = data.horizontal;
     vertical   = data.vertical;
   }
+
   horizontal = horizontal || evt.horizontal || 0;
   vertical   = vertical || evt.vertical || 0;
 
