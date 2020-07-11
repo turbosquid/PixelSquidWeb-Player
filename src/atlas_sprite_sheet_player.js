@@ -125,6 +125,7 @@ AtlasSpriteSheetPlayer.prototype.triggerEvent = function(elem, event, data) {
     if (element && element.length) {
       if (typeof CustomEvent !== 'undefined') {
         element[0].dispatchEvent(new CustomEvent(event, { 'detail': data }));
+        return
       }
 
       if (typeof document.createEvent !== 'undefined') {
@@ -132,6 +133,7 @@ AtlasSpriteSheetPlayer.prototype.triggerEvent = function(elem, event, data) {
         eventObject.initEvent(event, true, true);
         eventObject.detail = data;
         element[0].dispatchEvent(eventObject);
+        return
       }
 
       // photoshop
@@ -139,6 +141,7 @@ AtlasSpriteSheetPlayer.prototype.triggerEvent = function(elem, event, data) {
         var eventObject = new Event(event)
         eventObject.detail = data
         element[0].dispatchEvent(eventObject)
+        return
       }
     }
   }
@@ -216,16 +219,16 @@ AtlasSpriteSheetPlayer.prototype.renderCssCell = function(cell) {
 
     if (!this._cssBackgroundSet) {
       element.style['background-image']    = ['url("', this._url, '")'].join('');
+      element.style['background-size']     = [16 * this._imageResolution * this._backgroundScale, 'px ', this._latitudesForSize * this._imageResolution * this._backgroundScale, 'px'].join('');
       this._cssBackgroundSet = true
     }
 
     element.style['background-position'] = ['-', cell.left * this._backgroundScale, 'px -', cell.top * this._backgroundScale, 'px'].join('');
-    element.style['background-size']     = [16 * this._imageResolution * this._backgroundScale, 'px ', this._validLatitudes.length * this._imageResolution * this._backgroundScale, 'px'].join('');
   }
 };
 
 AtlasSpriteSheetPlayer.prototype.adjustValidLatitudes = function (cameraType) {
-  if (cameraType === 'top_half') {
+  if (cameraType === 'top_half' || cameraType === 'half_spinner') {
     this._validLatitudes = [
       'B',
       'C',
@@ -314,6 +317,7 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   this._initialImage     = null;
   this._currentImage     = null;
   this._validLatitudes   = null;
+  this._latitudesForSize = 0;
   this._validLongitudes  = null;
   this._imageResolution  = null;
   this._loadComplete     = false;
@@ -338,6 +342,13 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   this._validLatitudes  = this._asset.validLatitudes || this.VALID_LATITUDES;
   this._validLongitudes = this._asset.validLongitudes || this.VALID_LONGITUDES;
   this.adjustValidLatitudes(this._asset.extensions.atlas.camera_type_code || this._asset.atlas.camera_type_code);
+
+  // used for css rendering to set the background size
+  // the image is still 16*16 cells even though only 14 are renderable
+  this._latitudesForSize = this._validLatitudes.length
+  if (this._validLatitudes.length === 14) {
+    this._latitudesForSize = 16
+  }
 
   var preferredKey = 'sprites_' + this._preferredImageSize;
   if (this._asset[preferredKey]) {
