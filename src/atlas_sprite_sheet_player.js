@@ -405,7 +405,13 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   });
 };
 
-AtlasSpriteSheetPlayer.prototype.cancelLoading = function() {
+AtlasSpriteSheetPlayer.prototype.unload = function () {
+  if (this._atlasControls) {
+    this._atlasControls.unload();
+  }
+};
+
+AtlasSpriteSheetPlayer.prototype.cancelLoading = function () {
   if (this._atlasImage) {
     this._atlasImage.cancel();
   }

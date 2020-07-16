@@ -46,6 +46,10 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
   var touchEndEvent = window.navigator.pointerEnabled ? 'pointerup' : touchEndEvent;
 
   this._initialize = function () {
+    if (this._enabled) {
+      this.unload()
+    }
+
     if (this._controlAdapter) {
       this._controlAdapter._domElement = this._domElement;
     }
@@ -85,6 +89,26 @@ var AtlasSpriteSheetControls = function (parentSelector, domSelector, controlAda
 
     this._enabled = true;
   };
+
+  this.unload = function () {
+    if (this._$) {
+      this._$(this._parentSelector).off(touchStartEvent + '.player', this._domSelector, onTouchStart);
+      this._$(this._parentSelector).off('mousedown.player', this._domSelector, onMouseDown);
+      this._$(this._parentSelector).off('mouseup.player', this._domSelector, onMouseUp);
+      this._$(this._parentSelector).off('mousemove.player', this._domSelector, onMouseMove);
+      this._$(this._parentSelector).off('mouseout.player', this._domSelector, onMouseOut);
+      this._$(this._parentSelector).off(touchMoveEvent + '.player', this._domSelector, onTouchMove);
+      this._$(this._parentSelector).off(touchEndEvent + '.player', this._domSelector, onTouchEnd);
+    } else {
+      this._domElement.removeEventListener(touchStartEvent, onTouchStart);
+      this._domElement.removeEventListener('mousedown', onMouseDown);
+      this._domElement.removeEventListener('mouseup', onMouseUp);
+      this._domElement.removeEventListener('mousemove', onMouseMove);
+      this._domElement.removeEventListener('mouseout', onMouseOut);
+      this._domElement.removeEventListener(touchMoveEvent, onTouchMove);
+      this._domElement.removeEventListener(touchEndEvent, onTouchEnd);
+    }
+  }
 
   this.reset = function () {
     if (this._controlAdapter) {
