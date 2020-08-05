@@ -207,6 +207,15 @@ AtlasSpriteSheetPlayer.prototype.append = function(parent, child) {
   }
 };
 
+AtlasSpriteSheetPlayer.prototype.remove = function(parent, child) {
+  var parentElement = this._getDomElement(parent);
+  var childElement  = this._getDomElement(child);
+
+  if (parentElement && childElement) {
+    parentElement.removeChild(childElement);
+  }
+}
+
 let wasLoaded = false
 
 AtlasSpriteSheetPlayer.prototype.renderCssCell = function(cell) {
@@ -409,6 +418,11 @@ AtlasSpriteSheetPlayer.prototype.unload = function () {
   if (this._atlasControls) {
     this._atlasControls.unload();
   }
+  if (this._atlasImage) {
+    this._atlasImage.unload();
+  }
+
+  this.remove(this._elemViewer, this._div);
 };
 
 AtlasSpriteSheetPlayer.prototype.cancelLoading = function () {
