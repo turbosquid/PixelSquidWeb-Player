@@ -17,6 +17,10 @@ var AtlasImageWithProgress = function (div) {
   this.cancelled = false;
 }
 
+AtlasImageWithProgress.prototype.unload = function() {
+  this.image = null
+}
+
 AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowser) {
   this.cancelled = false;
 
