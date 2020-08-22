@@ -344,6 +344,9 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
     throw 'ASSET NOT A SPRITE SHEET ASSET';
   }
 
+  // a url to a local file already loaded
+  this._localUrl        = params.localUrl;
+
   this._assetId         = params.assetId;
   this._asset           = params.asset;
   this._initialImage    = params.initialImage || params.asset.initial_image || 'H01';
@@ -384,35 +387,47 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   }
   this._atlasSphere.initPartial(this._validLatitudes, this._validLongitudes, false, this._imageResolution);
   this.triggerEvent(this._elemEvents, 'atlas-load-start');
-  var that = this;
 
   const imageParent = params.attachImage ? this._elemEvents : null
   this._atlasImage = new AtlasImageWithProgress(imageParent);
-  this._atlasImage.load(this._url, function (error, progress, image) {
-    if (error) {
-      that.triggerEvent(that._elemEvents, 'atlas-load-error', { error: error });
-      callback(error, null);
-    }
-    if (!image && progress < 100) {
-      that.triggerEvent(that._elemEvents, 'atlas-load-progress', { progress: progress / 100 });
-    }
-    if (image && progress >= 100) {
-      that._loadComplete = true;
-      that.renderImage();
 
-      if (that._canvas && that._context) {
-        that.show(that._canvas);
-      } else {
-        that.show(that._div);
-      }
-      if (callback) {
-        callback(null, image);
-      }
-      that.triggerEvent(that._elemEvents, 'atlas-load-interactivity');
-      that.triggerEvent(that._elemEvents, 'atlas-load-complete', { image: image });
-    }
-  });
+  var that = this
+
+  if (this._localUrl) {
+    this._atlasImage.loadLocal(this._localUrl, function (error, progress, image) {
+      that.loadCallback(error, progress, image, callback)
+    })
+  } else {
+    this._atlasImage.load(this._url, function (error, progress, image) {
+      that.loadCallback(error, progress, image, callback)
+    })
+  }
 };
+
+AtlasSpriteSheetPlayer.prototype.loadCallback = function (error, progress, image, callback) {
+  if (error) {
+    this.triggerEvent(this._elemEvents, 'atlas-load-error', { error: error });
+    callback(error, null);
+  }
+  if (!image && progress < 100) {
+    this.triggerEvent(this._elemEvents, 'atlas-load-progress', { progress: progress / 100 });
+  }
+  if (image && progress >= 100) {
+    this._loadComplete = true;
+    this.renderImage();
+
+    if (this._canvas && this._context) {
+      this.show(this._canvas);
+    } else {
+      this.show(this._div);
+    }
+    if (callback) {
+      callback(null, image);
+    }
+    this.triggerEvent(this._elemEvents, 'atlas-load-interactivity');
+    this.triggerEvent(this._elemEvents, 'atlas-load-complete', { image: image });
+  }
+}
 
 AtlasSpriteSheetPlayer.prototype.unload = function () {
   if (this._atlasControls) {

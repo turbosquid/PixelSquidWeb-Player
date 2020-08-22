@@ -21,6 +21,38 @@ AtlasImageWithProgress.prototype.unload = function() {
   this.image = null
 }
 
+AtlasImageWithProgress.prototype.loadLocal = function(url, callback) {
+  // assumption url is created using createObjectURL with blob of data
+  // loaded from the local filesystem
+  if (callback) {
+    callback(null, 0.0, null);
+  }
+
+  var that = this
+
+  this.image.onload = function() {
+    try {
+      window.URL.revokeObjectURL(url)
+      if (that.parentElement) {
+        that.parentElement.removeChild(that.image)
+      }
+      if (callback) {
+        callback(null, 100.0, that.image)
+      }
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  this.image.onerror = function() {
+    if (callback) {
+      callback('error loading local atlas image', null, null)
+    }
+  }
+
+  this.image.src = url
+}
+
 AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowser) {
   this.cancelled = false;
 
