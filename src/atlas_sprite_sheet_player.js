@@ -228,6 +228,7 @@ AtlasSpriteSheetPlayer.prototype.renderCssCell = function(cell) {
 
     if (!this._cssBackgroundSet) {
       element.style['background-image']    = ['url("', this._url, '")'].join('');
+      element.style['background-repeat']   = 'no-repeat'
       element.style['background-size']     = [16 * this._imageResolution * this._backgroundScale, 'px ', this._latitudesForSize * this._imageResolution * this._backgroundScale, 'px'].join('');
       this._cssBackgroundSet = true
     }
@@ -355,12 +356,8 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   this._validLongitudes = this._asset.validLongitudes || this.VALID_LONGITUDES;
   this.adjustValidLatitudes(this._asset.extensions.atlas.camera_type_code || this._asset.atlas.camera_type_code);
 
-  // used for css rendering to set the background size
-  // the image is still 16*16 cells even though only 14 are renderable
-  this._latitudesForSize = this._validLatitudes.length
-  if (this._validLatitudes.length === 14) {
-    this._latitudesForSize = 16
-  }
+  //this._latitudesForSize = this._validLatitudes.length
+  this._latitudesForSize = 16
 
   var preferredKey = 'sprites_' + this._preferredImageSize;
   if (this._asset[preferredKey]) {
@@ -394,11 +391,17 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   var that = this
 
   if (this._localUrl) {
-    this._atlasImage.loadLocal(this._localUrl, function (error, progress, image) {
+    this._atlasImage.loadLocal(this._localUrl, function (error, progress, image, size) {
+      if (size) {
+        that._latitudesForSize = size.height / that._imageResolution
+      }
       that.loadCallback(error, progress, image, callback)
     })
   } else {
-    this._atlasImage.load(this._url, function (error, progress, image) {
+    this._atlasImage.load(this._url, function (error, progress, image, size) {
+      if (size) {
+        that._latitudesForSize = size.height / that._imageResolution
+      }
       that.loadCallback(error, progress, image, callback)
     })
   }
