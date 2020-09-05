@@ -57,6 +57,13 @@
   <iframe id='download_iframe'></iframe>
 
   <script>
+    var productIds = [
+      '1117422901537019360', // full spinner, reduced bitmap, clipped
+      '1110610592596498081', // half spinner, reduced bitmap, blank lines at bottom
+      '1025400099527726189', // half spinner, reduced bitmap, clipped
+    ]
+    var productId = productIds[0]
+
     window.player = null;
 
     ///***
@@ -154,7 +161,7 @@
       };
 
       //the replacement of the hostname is just needed for this example since it is running through a "proxy"
-      var url = 'http://' + window.location.hostname + ':8081/api/products/924832797581907663/download_links';
+      var url = 'http://' + window.location.hostname + ':8081/api/products/' + productId + '/download_links';
 
       $.ajax({
         type: 'POST',
@@ -178,7 +185,7 @@
     $(function() {
       //the replacement of the hostname is just needed for this example since it is running through a "proxy"
       $.ajax({
-        url: 'http://' + window.location.hostname + ':8081/api/products/924832797581907663?include=spinner,product_collections',
+        url: 'http://' + window.location.hostname + ':8081/api/products/' + productId + '?include=spinner,product_collections',
         headers: {
           'Authorization': 'Basic REVWRUxPUEVSX1BBQ0s6cGl4ZWxzcXVpZHNhbXBsZQ==',
           'Accept': 'application/vnd.api+json; com.pixelsquid.api.version=1',

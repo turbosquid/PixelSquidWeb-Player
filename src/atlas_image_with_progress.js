@@ -37,7 +37,11 @@ AtlasImageWithProgress.prototype.loadLocal = function(url, callback) {
         that.parentElement.removeChild(that.image)
       }
       if (callback) {
-        callback(null, 100.0, that.image)
+        var size = {
+          width: that.image.width || that.image.naturalWidth,
+          height: that.image.height || that.image.naturalHeight,
+        }
+        callback(null, 100.0, that.image, size)
       }
     } catch(e) {
       console.log(e)
@@ -81,7 +85,11 @@ AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowse
               that.parentElement.removeChild(that.image)
             }
             if (callback) {
-              callback(null, 100.0, that.image);
+              var size = {
+                width: that.image.width || that.image.naturalWidth,
+                height: that.image.height || that.image.naturalHeight,
+              }
+              callback(null, 100.0, that.image, size);
             }
           }
           catch (e) {
