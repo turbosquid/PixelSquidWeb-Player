@@ -44,7 +44,7 @@ AtlasImageWithProgress.prototype.loadLocal = function(url, callback) {
         callback(null, 100.0, that.image, size)
       }
     } catch(e) {
-      console.log(e)
+      callback(e, 0.0, null, null)
     }
   }
 
