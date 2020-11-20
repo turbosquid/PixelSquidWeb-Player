@@ -8,7 +8,7 @@ AtlasAPIAdapter.prototype.parseResponse = function(response) {
   //possibly null if not only spinner data is returned
   this._asset.signature_image = response.data.attributes.search_preview_url;
   if (this._asset.signature_image) {
-    var found = this._asset.signature_image.match(/600\/(.*)\.jpg/)
+    var found = this._asset.signature_image.match(/600\/([^\/]*)\.jpg/)
     if (found) {
       this._asset.initial_image = found[1];
     }
