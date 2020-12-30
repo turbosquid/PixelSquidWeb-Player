@@ -57,6 +57,10 @@ AtlasClientCapabilities.getCapabilities = function () {
 };
 AtlasClientCapabilities.mergeCapabilities = function (newCapabilities) {
   function merge(newValue, currentValue) {
+    if (!newValue) {
+      return newValue;
+    }
+
     return newValue || currentValue;
   }
   var capabilities = this.getCapabilities();

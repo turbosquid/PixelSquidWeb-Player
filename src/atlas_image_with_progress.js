@@ -1,6 +1,8 @@
 'use strict';
 
-var AtlasImageWithProgress = function (div) {
+var AtlasImageWithProgress = function (div, transport) {
+  this.transport = transport
+
   this.percentComplete = 0.0;
   this.image = new Image();
   this.parentElement = null
@@ -60,7 +62,7 @@ AtlasImageWithProgress.prototype.loadLocal = function(url, callback) {
 AtlasImageWithProgress.prototype.load = function(url, callback, forceOlderBrowser) {
   this.cancelled = false;
 
-  var xml = new XMLHttpRequest();
+  var xml = this.transport || new XMLHttpRequest()
   if (('onprogress' in xml) && (!forceOlderBrowser)) {
     this.percentComplete = 0.0;
 

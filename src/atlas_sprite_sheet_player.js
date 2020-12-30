@@ -44,6 +44,9 @@ function AtlasSpriteSheetPlayer(configuration) {
     return (name in configuration) ? configuration[name] : defaultValue;
   }
 
+  // added for testing
+  this._transport            = configuration.transport
+
   this._elemControlArea      = configFetch('controlArea', '.atlas-control-area');
   this._elemViewer           = configFetch('viewer', '.atlas-viewer');
   this._elemEvents           = configFetch('events', '.atlas-events');
@@ -382,11 +385,13 @@ AtlasSpriteSheetPlayer.prototype.load = function (params, callback) {
   } else {
     this.createDiv();
   }
+
   this._atlasSphere.initPartial(this._validLatitudes, this._validLongitudes, false, this._imageResolution);
   this.triggerEvent(this._elemEvents, 'atlas-load-start');
 
   const imageParent = params.attachImage ? this._elemEvents : null
-  this._atlasImage = new AtlasImageWithProgress(imageParent);
+
+  this._atlasImage = new AtlasImageWithProgress(imageParent, this._transport);
 
   var that = this
 
