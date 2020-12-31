@@ -5,7 +5,9 @@
     "build": "webpack",
     "start": "webpack-dev-server --hot --host 0.0.0.0",
     "cypress:open": "cypress open",
-    "test:cy": "start-server-and-test start http-get://localhost:8080 cypress:open",
+    "cypress:run": "cypress run --browser chrome",
+    "cy:open": "start-server-and-test start http-get://localhost:8080 cypress:open",
+    "test:cy": "start-server-and-test start http-get://localhost:8080 cypress:run",
     "test:jest": "jest __tests__/*.spec.*",
     "test": "npm run test:jest && npm run test:cy"
   },
