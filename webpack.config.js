@@ -85,7 +85,7 @@ if (TARGET === 'start') {
         authorization: req.headers.authorization,
         'x-client-external-user-id': req.headers['x-client-external-user-id']
       },
-      uri: `http://${PS_API_DOMAIN}/api/products/${req.params.productId}${query.search}`
+      uri: `https://${PS_API_DOMAIN}/api/products/${req.params.productId}${query.search}`
     }, function(apiErr, apiRes, apiBody) {
       res.contentType('application/json');
       res.send(apiBody);
@@ -100,7 +100,7 @@ if (TARGET === 'start') {
         authorization: req.headers.authorization,
         'x-client-external-user-id': req.headers['x-client-external-user-id']
       },
-      uri: `http://${PS_API_DOMAIN}/api/products${query.search}`
+      uri: `https://${PS_API_DOMAIN}/api/products${query.search}`
     }, function(apiErr, apiRes, apiBody) {
       res.contentType('application/json');
       res.send(apiBody);
