@@ -71,7 +71,9 @@ function AtlasSpriteSheetPlayer(configuration) {
   this._imageResolution  = 0;
   this._canvasResolution = 0;
   this._loadComplete     = false;
-  this._cssBackgroundSet = false
+  this._cssBackgroundSet = false;
+
+  this._loadingFallback  = null;
 
   var that = this;
   if (this._$) {
@@ -417,24 +419,46 @@ AtlasSpriteSheetPlayer.prototype.loadCallback = function (error, progress, image
     this.triggerEvent(this._elemEvents, 'atlas-load-error', { error: error });
     callback(error, null);
   }
+
   if (!image && progress < 100) {
     this.triggerEvent(this._elemEvents, 'atlas-load-progress', { progress: progress / 100 });
   }
-  if (image && progress >= 100) {
-    this._loadComplete = true;
-    this.renderImage();
 
-    if (this._canvas && this._context) {
-      this.show(this._canvas);
-    } else {
-      this.show(this._div);
-    }
-    if (callback) {
-      callback(null, image);
-    }
-    this.triggerEvent(this._elemEvents, 'atlas-load-interactivity');
-    this.triggerEvent(this._elemEvents, 'atlas-load-complete', { image: image });
+  if (!image && progress >= 100) {
+    // we should not hit this, but if we do, then loading will stall.  the user will see
+    // the progress bar at 100%, but the panel is still greyed out
+    // this should work in the plugin, but clients that expect the image to be returned may
+    // have problems.
+    var that = this
+    this._loadingFallback  = setTimeout(function() {
+      that.triggerLoadComplete({}, callback);
+    }, 2000);
   }
+
+  if (image && progress >= 100) {
+    if (this._loadingFallback) {
+      clearTimeout(this._loadingFallback);
+      this._loadingFallback = null;
+    }
+
+    this.triggerLoadComplete(image, callback);
+  }
+}
+
+AtlasSpriteSheetPlayer.prototype.triggerLoadComplete = function(image, callback) {
+  this._loadComplete = true;
+  this.renderImage();
+
+  if (this._canvas && this._context) {
+    this.show(this._canvas);
+  } else {
+    this.show(this._div);
+  }
+  if (callback) {
+    callback(null, image);
+  }
+  this.triggerEvent(this._elemEvents, 'atlas-load-interactivity');
+  this.triggerEvent(this._elemEvents, 'atlas-load-complete', { image: image });
 }
 
 AtlasSpriteSheetPlayer.prototype.unload = function () {
