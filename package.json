@@ -36,6 +36,6 @@
   "dependencies": {
     "acorn": "^6.4.1",
     "kind-of": "^6.0.3",
-    "minimist": "^1.2.3"
+    "minimist": "^1.2.6"
   }
 }
