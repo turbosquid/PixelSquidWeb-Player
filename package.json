@@ -21,7 +21,7 @@
     "babel-loader": "^8.0.5",
     "body-parser": "^1.15.0",
     "cypress": "^6.2.0",
-    "express": "^4.13.4",
+    "express": "^4.17.3",
     "jest": "^26.6.3",
     "jest-canvas-mock": "^2.3.0",
     "mock-xmlhttprequest": "^7.0.3",
